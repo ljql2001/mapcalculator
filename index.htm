@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8"> 
+    <title>工会战在线编辑器</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="stylesheet" href="main.min.css">
+	<script src="jquery-3.5.1.min.js"></script>
+	<script src="extension.js"></script>
+	<!--[if lt IE 9]>
+	<script src="//cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
+	<![endif]--> 
+</head>
+<body>
+<table id="map" class="map">
+<tr class="headline">
+<th><input id="editor" type="button" value="开始编辑"/></th><th id="lake">湖泊</th><th class="blank">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</th><th id="hill">山</th><th class="blank">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</th><th id="bank">银行</th>
+<th id="bank"></th><th><input id="builder" type="button" value="生成地图"/></th></tr>
+</table>
+<table id="map" class="plist">
+  <!--caption>第xxx轮工会战</caption-->
+  <tr class="headline"><th></th><th>01</th><th>02</th><th>03</th><th>04</th><th>05</th><th>06</th><th>07</th><th>08</th><th>09</th><th>10</th><th>11</th><th>12</th><th>13</th><th>14</th><th>15</th><th>16</th><th>17</th><th>18</th><th>19</th><th>20</th><th></th></tr>
+  <tr>
+  <th>T</th>
+  <td id="T1" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="T2" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="T3" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="T4" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="T5" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="T6" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="T7" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="T8" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="T9" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="T10" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="T11" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="T12" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="T13" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="T14" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="T15" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="T16" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="T17" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="T18" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="T19" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="T20" class="site"><input type="text" disabled="disabled" /></td>
+  <th>T</th>
+  </tr>
+  <tr>
+  <th>S</th>
+  <td id="S1" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="S2" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="S3" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="S4" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="S5" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="S6" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="S7" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="S8" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="S9" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="S10" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="S11" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="S12" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="S13" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="S14" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="S15" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="S16" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="S17" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="S18" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="S19" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="S20" class="site"><input type="text" disabled="disabled" /></td>
+  <th>S</th>
+  </tr>
+  <tr>
+  <th>R</th>
+  <td id="R1" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="R2" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="R3" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="R4" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="R5" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="R6" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="R7" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="R8" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="R9" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="R10" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="R11" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="R12" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="R13" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="R14" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="R15" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="R16" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="R17" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="R18" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="R19" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="R20" class="site"><input type="text" disabled="disabled" /></td>
+  <th>R</th>
+  </tr>
+  <tr>
+  <th>Q</th>
+  <td id="Q1" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="Q2" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="Q3" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="Q4" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="Q5" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="Q6" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="Q7" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="Q8" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="Q9" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="Q10" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="Q11" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="Q12" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="Q13" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="Q14" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="Q15" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="Q16" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="Q17" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="Q18" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="Q19" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="Q20" class="site"><input type="text" disabled="disabled" /></td>
+  <th>Q</th>
+  </tr>
+  <tr>
+  <th>P</th>
+  <td id="P1" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="P2" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="P3" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="P4" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="P5" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="P6" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="P7" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="P8" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="P9" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="P10" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="P11" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="P12" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="P13" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="P14" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="P15" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="P16" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="P17" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="P18" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="P19" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="P20" class="site"><input type="text" disabled="disabled" /></td>
+  <th>P</th>
+  </tr>
+  <tr>
+  <th>O</th>
+  <td id="O1" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="O2" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="O3" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="O4" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="O5" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="O6" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="O7" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="O8" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="O9" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="O10" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="O11" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="O12" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="O13" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="O14" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="O15" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="O16" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="O17" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="O18" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="O19" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="O20" class="site"><input type="text" disabled="disabled" /></td>
+  <th>O</th>
+  </tr>
+  <tr>
+  <th>N</th>
+  <td id="N1" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="N2" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="N3" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="N4" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="N5" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="N6" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="N7" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="N8" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="N9" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="N10" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="N11" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="N12" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="N13" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="N14" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="N15" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="N16" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="N17" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="N18" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="N19" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="N20" class="site"><input type="text" disabled="disabled" /></td>
+  <th>N</th>
+  </tr>
+    <tr>
+  <th>M</th>
+  <td id="M1" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="M2" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="M3" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="M4" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="M5" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="M6" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="M7" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="M8" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="M9" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="M10" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="M11" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="M12" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="M13" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="M14" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="M15" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="M16" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="M17" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="M18" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="M19" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="M20" class="site"><input type="text" disabled="disabled" /></td>
+  <th>M</th>
+  </tr>
+    <tr>
+  <th>L</th>
+  <td id="L1" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="L2" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="L3" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="L4" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="L5" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="L6" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="L7" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="L8" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="L9" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="L10" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="L11" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="L12" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="L13" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="L14" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="L15" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="L16" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="L17" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="L18" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="L19" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="L20" class="site"><input type="text" disabled="disabled" /></td>
+  <th>L</th>
+  </tr>
+    <tr>
+  <th>K</th>
+  <td id="K1" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="K2" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="K3" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="K4" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="K5" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="K6" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="K7" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="K8" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="K9" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="K10" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="K11" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="K12" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="K13" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="K14" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="K15" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="K16" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="K17" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="K18" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="K19" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="K20" class="site"><input type="text" disabled="disabled" /></td>
+  <th>K</th>
+  </tr>
+    <tr>
+  <th>J</th>
+  <td id="J1" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="J2" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="J3" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="J4" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="J5" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="J6" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="J7" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="J8" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="J9" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="J10" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="J11" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="J12" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="J13" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="J14" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="J15" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="J16" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="J17" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="J18" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="J19" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="J20" class="site"><input type="text" disabled="disabled" /></td>
+  <th>J</th>
+  </tr>
+    <tr>
+  <th>I</th>
+  <td id="I1" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="I2" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="I3" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="I4" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="I5" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="I6" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="I7" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="I8" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="I9" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="I10" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="I11" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="I12" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="I13" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="I14" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="I15" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="I16" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="I17" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="I18" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="I19" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="I20" class="site"><input type="text" disabled="disabled" /></td>
+  <th>I</th>
+  </tr>
+    <tr>
+  <th>H</th>
+  <td id="H1" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="H2" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="H3" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="H4" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="H5" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="H6" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="H7" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="H8" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="H9" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="H10" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="H11" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="H12" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="H13" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="H14" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="H15" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="H16" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="H17" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="H18" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="H19" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="H20" class="site"><input type="text" disabled="disabled" /></td>
+  <th>H</th>
+  </tr>
+    <tr>
+  <th>G</th>
+  <td id="G1" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="G2" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="G3" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="G4" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="G5" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="G6" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="G7" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="G8" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="G9" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="G10" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="G11" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="G12" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="G13" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="G14" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="G15" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="G16" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="G17" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="G18" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="G19" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="G20" class="site"><input type="text" disabled="disabled" /></td>
+  <th>G</th>
+  </tr>
+    <tr>
+  <th>F</th>
+  <td id="F1" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="F2" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="F3" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="F4" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="F5" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="F6" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="F7" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="F8" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="F9" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="F10" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="F11" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="F12" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="F13" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="F14" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="F15" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="F16" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="F17" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="F18" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="F19" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="F20" class="site"><input type="text" disabled="disabled" /></td>
+  <th>F</th>
+  </tr>
+    <tr>
+  <th>E</th>
+  <td id="E1" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="E2" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="E3" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="E4" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="E5" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="E6" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="E7" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="E8" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="E9" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="E10" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="E11" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="E12" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="E13" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="E14" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="E15" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="E16" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="E17" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="E18" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="E19" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="E20" class="site"><input type="text" disabled="disabled" /></td>
+  <th>E</th>
+  </tr>
+    <tr>
+  <th>D</th>
+  <td id="D1" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="D2" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="D3" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="D4" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="D5" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="D6" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="D7" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="D8" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="D9" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="D10" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="D11" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="D12" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="D13" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="D14" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="D15" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="D16" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="D17" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="D18" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="D19" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="D20" class="site"><input type="text" disabled="disabled" /></td>
+  <th>D</th>
+  </tr>
+    <tr>
+  <th>C</th>
+  <td id="C1" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="C2" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="C3" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="C4" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="C5" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="C6" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="C7" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="C8" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="C9" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="C10" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="C11" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="C12" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="C13" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="C14" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="C15" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="C16" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="C17" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="C18" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="C19" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="C20" class="site"><input type="text" disabled="disabled" /></td>
+  <th>C</th>
+  </tr>
+    <tr>
+  <th>B</th>
+  <td id="B1" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="B2" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="B3" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="B4" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="B5" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="B6" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="B7" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="B8" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="B9" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="B10" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="B11" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="B12" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="B13" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="B14" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="B15" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="B16" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="B17" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="B18" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="B19" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="B20" class="site"><input type="text" disabled="disabled" /></td>
+  <th>B</th>
+  </tr>
+    <tr>
+  <th>A</th>
+  <td id="A1" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="A2" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="A3" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="A4" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="A5" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="A6" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="A7" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="A8" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="A9" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="A10" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="A11" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="A12" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="A13" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="A14" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="A15" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="A16" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="A17" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="A18" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="A19" class="site"><input type="text" disabled="disabled" /></td>
+  <td id="A20" class="site"><input type="text" disabled="disabled" /></td>
+  <th>A</th>
+  </tr>
+  <tr class="headline"><th></th><th>01</th><th>02</th><th>03</th><th>04</th><th>05</th><th>06</th><th>07</th><th>08</th><th>09</th><th>10</th><th>11</th><th>12</th><th>13</th><th>14</th><th>15</th><th>16</th><th>17</th><th>18</th><th>19</th><th>20</th><th></th></tr>
+
+ </table>
+
+</body>
+</html>

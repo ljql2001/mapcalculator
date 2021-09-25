@@ -1,0 +1,52 @@
+ *{
+   margin: 0;
+   padding: 0;
+   }
+ .plist{
+ width: 20px;
+ margin: 100px auto;
+ border: 1px solid #aaa;
+ border-collapse: collapse;
+ }
+ .plist caption{
+ font: 700 20px/28px "Î¢ÈíÑÅºÚ";
+ padding: 10px;
+ }
+ .plist th,.plist td{
+ width: 20px;
+ line-height: 24px;
+ font-size: 14px;
+ font-family: "Î¢ÈíÑÅºÚ";
+ border: 1px solid #aaa;
+ text-align: center;
+ padding: 4px;
+ }
+ .plist td{
+ padding: 0;
+ 
+ }
+ .plist tr.headline{
+ background-color: #379;
+ }
+ .plist td input{
+ width: 60px;
+ text-align: center;
+ border: none;
+ outline-style: none;
+ font-size: 10px;
+ border: 0px solid #fff;
+ }
+  .map th, .map td{
+ width: 60px;
+ line-height: 24px;
+ font-size: 14px;
+ font-family: "Î¢ÈíÑÅºÚ";
+ text-align: center;
+ padding: 4px;
+ }
+  .map tr.headline{
+ background-color: #fff;
+ }
+ div {
+   float: left;
+ }
