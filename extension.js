@@ -75,9 +75,9 @@ var td_transform=function(all, type) {
 			var max = String.fromCharCode(row_max); var grid2 = "td#"+max+col_max;
 			var min = String.fromCharCode(row_min); var grid3 = "td#"+min+col_min;
 			var min = String.fromCharCode(row_min); var grid4 = "td#"+min+col_max;
-			console.log(grid1);
+			//console.log(grid1);
 			$(grid1).attr("rowspan", "2").attr("colspan", "2"); $(grid1).children("input").hide(); 
-			console.log(score);
+			//console.log(score);
 			$(grid1).attr("score", score); $(grid1).attr("type", type); td_selection($(grid1));
 			[grid2, grid3, grid4].map(function(g) { $(g).remove(); });
 			if (type == "hill") {
@@ -219,8 +219,9 @@ function upload(input) {  //支持chrome IE10
         filename = file.name.split(".")[0];  
         var reader = new FileReader();  
         reader.onload = function() {  
-            console.log(this.result)  
-            alert(this.result);  
+            console.log(this.result);
+            let json = JSON.parse(this.result);
+            alert(json);
         }  
         reader.readAsText(file);  
     }   
@@ -229,16 +230,20 @@ function upload(input) {  //支持chrome IE10
         var xmlDoc;   
         xmlDoc = new ActiveXObject("Microsoft.XMLDOM");   
         xmlDoc.async = false;   
-        xmlDoc.load(input.value);   
-        alert(xmlDoc.xml);   
+        xmlDoc.load(input.value);
+        console.log(xmlDoc.xml);
+		let json = JSON.parse(xmlDoc.xml);   
+        alert(json);
     }   
     //支持FF  
     else if (document.implementation && document.implementation.createDocument) {   
         var xmlDoc;   
         xmlDoc = document.implementation.createDocument("", "", null);   
         xmlDoc.async = false;   
-        xmlDoc.load(input.value);   
-        alert(xmlDoc.xml);  
+        xmlDoc.load(input.value);
+		console.log(xmlDoc.xml);
+		let json = JSON.parse(xmlDoc.xml);   
+        alert(json);
     } else {   
         alert('error');   
     }   
@@ -246,17 +251,25 @@ function upload(input) {  //支持chrome IE10
 
 // 导出地图
 var btn_exportmap_action=function() {
-	$('td.site').each(function(i) {
-		//console.log($(this).attr("picked"));
-		var item = $(this); item.children('input').hide();
-		var v=item.children('input').val(); item.attr('score',v)
-		console.log(v);
+	var json = '[', comma = '';
+	$('#template td.site').each(function(i) {
+		var item = $(this); 
+		var id = item.attr("id"); var v = item.attr("score");
+		//console.log(id + ":" + v);
+		if (v != 0 && v != 'undefined') {
+			json += comma + '{"' + id + '":' + v + '}';
+		}
+		comma = ',';
 	});
+	json += ']';
 	var downloadFile = function(content) {
-      var file = new File([content], "标题.txt", { type: "text/plain;charset=utf-8" })
-      saveAs(file)
+      // var file = new File([content], "标题.txt", { type: "text/plain;charset=utf-8" });
+      // saveAs(file);
+      var data = JSON.stringify(content);
+      var blob = new Blob([data], {type: "text/plain;charset=utf-8"});
+      saveAs(blob, "template.json");
     }
-    downloadFile("文件内容")
+    downloadFile(json);
 }
 
 $(document).ready(function(){
