@@ -1,3 +1,7 @@
+var cols = ['01','02','03','04','05','06','07','08','09','10','11','12','13','14','15','16','17','18','19','20'];
+var rows = ['T','S','R','Q','P','O','N','M','L','K','J','I','H','G','F','E','D','C','B','A'];
+var bases = ['T15','F20','A06','O01'];
+var colors=['red','green','blue','yellow'];
 
 var button_action=function() {
 	//return function() {
@@ -127,7 +131,7 @@ var btn_editmap_action=function() {
 	$(this).val(selected?'完成编辑':'开始编辑');
 	
 	if (selected) {
-		$("input#builder").prop('disabled',"disabled");
+		$("input#build").prop('disabled',"disabled");
 		$('td.site').each(function(i) {
 			//console.log($(this).attr("picked"));
 			var item = $(this); item.children('input').removeAttr('disabled');
@@ -135,7 +139,7 @@ var btn_editmap_action=function() {
 		});
 	} else {
 		["#lake","#hill","#bank"].map(function(b) { $(b).attr("picked", "off"); $(b).css("background-color","#fff"); });
-		$("input#builder").removeAttr('disabled');
+		$("input#build").removeAttr('disabled');
 		$('td.site').each(function(i) {
 			//console.log($(this).attr("picked"));
 			if ($(this).attr('type')=='lake' || $(this).attr('type')=='hill' || $(this).attr('type')=='bank') { return; }
@@ -145,15 +149,114 @@ var btn_editmap_action=function() {
 	}
 }
 
+var make_table_HT=function() {
+	var r = '<tr class="headline"><th></th>';
+	for (var j = 0; j < cols.length; j++) {
+		r += '<th>' + cols[j] + '</th>';
+	}
+	r += '<th></th></tr>';
+	return r;
+}
+
+var color_of_td=function(row, col, round) {
+	var r = new Array(); var nearest = 10000;
+	for (var i in bases) {
+		var b = bases[i]; var distance = Math.abs(b.charCodeAt(0) - rows[row].charCodeAt(0)) + Math.abs(parseInt(b.substring(1)) - parseInt(cols[col]));
+		if (distance <= round) {
+			if (distance < nearest) {
+				r.splice(0, 0, colors[i]); nearest = distance; 
+			} else {
+				r.push(colors[i]);
+			}
+		}
+	}
+	//console.log(r);
+	return r;
+}
+
+// 生成地图
 var btn_buildmap_action=function() {
-	
+	/*
 	$('td.site').each(function(i) {
 		//console.log($(this).attr("picked"));
 		var item = $(this); item.children('input').hide();
 		var v=item.children('input').val(); item.attr('score',v)
 		console.log(v);
 	});
-	
+	*/
+	var round=$('#round').val();
+	var html = '<table id="map" class="war">'
+	html += make_table_HT();
+	for (var i = 0; i < rows.length; i++) {
+		var r = rows[i];
+		html += '<tr><th class="headline">' + r + '</th>';
+		for (var j = 0; j < cols.length; j++) {
+			var c = cols[j]; var cs = color_of_td(i, j, round);
+			if (cs.length > 0) {
+				html += '<td id="' + r + c + '" style="background-color: ' + cs[0] + '">' + Number(cs.length) + '</td>';
+			} else {
+				html += '<td id="' + r + c + '">' + Number(cs.length) + '</td>';
+			}
+		}
+		html += '<th class="headline">' + r + '</th></tr>';
+	};
+	html += make_table_HT();
+	html += '</table>';
+	// var nt=document.createElement("table");
+	// nt.innerHTML=html;
+	$('#template').after(html);
+}
+
+// 导入地图
+var btn_importmap_action=function() {
+
+}
+
+//前端读取本地文件的内容   下面代码中的this.result即为获取到的内容
+function upload(input) {  //支持chrome IE10  
+    if (window.FileReader) {  
+        var file = input.files[0];  
+        filename = file.name.split(".")[0];  
+        var reader = new FileReader();  
+        reader.onload = function() {  
+            console.log(this.result)  
+            alert(this.result);  
+        }  
+        reader.readAsText(file);  
+    }   
+    //支持IE 7 8 9 10  
+    else if (typeof window.ActiveXObject != 'undefined'){  
+        var xmlDoc;   
+        xmlDoc = new ActiveXObject("Microsoft.XMLDOM");   
+        xmlDoc.async = false;   
+        xmlDoc.load(input.value);   
+        alert(xmlDoc.xml);   
+    }   
+    //支持FF  
+    else if (document.implementation && document.implementation.createDocument) {   
+        var xmlDoc;   
+        xmlDoc = document.implementation.createDocument("", "", null);   
+        xmlDoc.async = false;   
+        xmlDoc.load(input.value);   
+        alert(xmlDoc.xml);  
+    } else {   
+        alert('error');   
+    }   
+}
+
+// 导出地图
+var btn_exportmap_action=function() {
+	$('td.site').each(function(i) {
+		//console.log($(this).attr("picked"));
+		var item = $(this); item.children('input').hide();
+		var v=item.children('input').val(); item.attr('score',v)
+		console.log(v);
+	});
+	var downloadFile = function(content) {
+      var file = new File([content], "标题.txt", { type: "text/plain;charset=utf-8" })
+      saveAs(file)
+    }
+    downloadFile("文件内容")
 }
 
 $(document).ready(function(){
@@ -162,5 +265,7 @@ $(document).ready(function(){
   $("#bank").click(button_action);
   $("td").click(td_action);
   $("input#editor").click(btn_editmap_action);
-  $("input#builder").click(btn_buildmap_action);
+  $("input#build").click(btn_buildmap_action);
+  $("input#import").click(btn_importmap_action);
+  $("input#export").click(btn_exportmap_action);
 });
