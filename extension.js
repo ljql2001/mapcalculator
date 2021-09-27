@@ -191,11 +191,12 @@ var btn_buildmap_action=function() {
 		var r = rows[i];
 		html += '<tr><th class="headline">' + r + '</th>';
 		for (var j = 0; j < cols.length; j++) {
-			var c = cols[j]; var cs = color_of_td(i, j, round);
+			var c = cols[j]; var id = '#template' + ' #' + r + c; //console.log(id);
+			var cs = color_of_td(i, j, round);
 			if (cs.length > 0) {
-				html += '<td id="' + r + c + '" style="background-color: ' + cs[0] + '">' + Number(cs.length) + '</td>';
+				html += '<td id="' + r + c + '" style="background-color: ' + cs[0] + '">' + $(id).attr('score') + '</td>';
 			} else {
-				html += '<td id="' + r + c + '">' + Number(cs.length) + '</td>';
+				html += '<td id="' + r + c + '">' + $(id).attr('score') + '</td>';
 			}
 		}
 		html += '<th class="headline">' + r + '</th></tr>';
@@ -204,7 +205,7 @@ var btn_buildmap_action=function() {
 	html += '</table>';
 	// var nt=document.createElement("table");
 	// nt.innerHTML=html;
-	$('#template').after(html);
+	$('#stub').before(html);
 }
 
 // 导入地图
@@ -258,8 +259,8 @@ var btn_exportmap_action=function() {
 		//console.log(id + ":" + v);
 		if (v != 0 && v != 'undefined') {
 			json += comma + '{"' + id + '":' + v + '}';
+			comma = ',';
 		}
-		comma = ',';
 	});
 	json += ']';
 	var downloadFile = function(content) {
