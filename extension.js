@@ -185,7 +185,8 @@ var btn_buildmap_action=function() {
 	});
 	*/
 	var round=$('#round').val();
-	var html = '<table id="map" class="war">'
+	var html = '<div>';
+	html += '<table id="map" class="war">';
 	html += make_table_HT();
 	for (var i = 0; i < rows.length; i++) {
 		var r = rows[i];
@@ -203,6 +204,8 @@ var btn_buildmap_action=function() {
 	};
 	html += make_table_HT();
 	html += '</table>';
+	html += '<table id="menu" class="menu"><th><td></td></th></table>';
+	html += '</div>';
 	// var nt=document.createElement("table");
 	// nt.innerHTML=html;
 	$('#stub').before(html);
