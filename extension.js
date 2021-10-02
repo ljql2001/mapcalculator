@@ -71,10 +71,10 @@ var td_transform=function(all, type) {
 		}
 		r = (row_max-row_min<2) && (col_max-col_min<2);
 		if (r) {
-			var max = String.fromCharCode(row_max); var grid1 = "td#"+max+col_min;
-			var max = String.fromCharCode(row_max); var grid2 = "td#"+max+col_max;
-			var min = String.fromCharCode(row_min); var grid3 = "td#"+min+col_min;
-			var min = String.fromCharCode(row_min); var grid4 = "td#"+min+col_max;
+			var max = String.fromCharCode(row_max); var grid1 = "td#"+max+(col_min<10 ? '0'+col_min : col_min);
+			var max = String.fromCharCode(row_max); var grid2 = "td#"+max+(col_max<10 ? '0'+col_max : col_max);
+			var min = String.fromCharCode(row_min); var grid3 = "td#"+min+(col_min<10 ? '0'+col_min : col_min);
+			var min = String.fromCharCode(row_min); var grid4 = "td#"+min+(col_max<10 ? '0'+col_max : col_max);
 			//console.log(grid1);
 			$(grid1).attr("rowspan", "2").attr("colspan", "2"); $(grid1).children("input").hide(); 
 			//console.log(score);
@@ -193,18 +193,20 @@ var btn_buildmap_action=function() {
 		html += '<tr><th class="headline">' + r + '</th>';
 		for (var j = 0; j < cols.length; j++) {
 			var c = cols[j]; var id = '#template' + ' #' + r + c; //console.log(id);
-			var cs = color_of_td(i, j, round);
+			var cs = color_of_td(i, j, round); var score = $(id).attr('score');
+			score = (score == undefined ? '0' : score);
+			//console.log(score);
 			if (cs.length > 0) {
-				html += '<td id="' + r + c + '" style="background-color: ' + cs[0] + '">' + $(id).attr('score') + '</td>';
+				html += '<td id="' + r + c + '" style="background-color: ' + cs[0] + '">' + score + '</td>';
 			} else {
-				html += '<td id="' + r + c + '">' + $(id).attr('score') + '</td>';
+				html += '<td id="' + r + c + '">' + score + '</td>';
 			}
 		}
 		html += '<th class="headline">' + r + '</th></tr>';
 	};
 	html += make_table_HT();
 	html += '</table>';
-	html += '<table id="menu" class="menu"><th><td></td></th></table>';
+	html += '<table id="daily" class="menu"><th><td>aaaaa</td></th></table>';
 	html += '</div>';
 	// var nt=document.createElement("table");
 	// nt.innerHTML=html;
@@ -260,7 +262,7 @@ var btn_exportmap_action=function() {
 		var item = $(this); 
 		var id = item.attr("id"); var v = item.attr("score");
 		//console.log(id + ":" + v);
-		if (v != 0 && v != 'undefined') {
+		if (v != 0 && v != undefined) {
 			json += comma + '{"' + id + '":' + v + '}';
 			comma = ',';
 		}
