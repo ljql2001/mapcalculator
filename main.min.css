@@ -9,7 +9,7 @@
  border-collapse: collapse;
  }
  .plist caption{
- font: 700 20px/28px "΢���ź�";
+ font: 700 20px/28px "Î¢ÈíÑÅºÚ";
  padding: 10px;
  }
  .plist th,.plist td,.war th,.war td{
@@ -20,7 +20,7 @@
  width: 20px;
  line-height: 24px;
  font-size: 14px;
- font-family: "΢���ź�";
+ font-family: "Î¢ÈíÑÅºÚ";
  padding: 4px;
  }
  .plist td{
@@ -38,11 +38,22 @@ tr.headline,th.headline{
  font-size: 10px;
  border: 0px solid #fff;
  }
-  .menu th, .menu td{
+ .menu th, .menu td{
  width: 60px;
  line-height: 24px;
  font-size: 14px;
- font-family: "΢���ź�";
+ font-family: "Î¢ÈíÑÅºÚ";
  text-align: center;
  padding: 4px;
  }
+ div {
+ display: inline;
+ float: left;
+}
+div.seedleft {
+width: 70%;
+}
+div.seedright {
+width: 30%;
+}
+

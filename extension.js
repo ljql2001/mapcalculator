@@ -1,7 +1,8 @@
 var cols = ['01','02','03','04','05','06','07','08','09','10','11','12','13','14','15','16','17','18','19','20'];
 var rows = ['T','S','R','Q','P','O','N','M','L','K','J','I','H','G','F','E','D','C','B','A'];
 var bases = ['T15','F20','A06','O01'];
-var colors=['red','green','blue','yellow'];
+var colors = ['red','green','blue','yellow'];
+var daily_summary = {};
 
 var button_action=function() {
 	//return function() {
@@ -144,7 +145,7 @@ var btn_editmap_action=function() {
 			//console.log($(this).attr("picked"));
 			if ($(this).attr('type')=='lake' || $(this).attr('type')=='hill' || $(this).attr('type')=='bank') { return; }
 			var item = $(this); item.children('input').prop('disabled',"disabled");
-			var v=item.children('input').val(); item.attr('score',v);
+			var v=item.children('input').val(); v=(v == 'NaN' ? 0 : v); item.attr('score',v);
 		});
 	}
 }
@@ -174,18 +175,22 @@ var color_of_td=function(row, col, round) {
 	return r;
 }
 
-// 生成地图
+// 计算累计总积分
+var calculate_daily_sum=function(day) {
+	var r = [0,0,0,0];
+	for (var i=1; i<=day; i++) {
+		var daily = daily_summary[i]; if (daily == null) { continue; }
+		for (var j=0; j<daily.length; j++) {
+			r[j] += daily[j];
+		}
+	}
+	return r;
+}
+
+// 生成结算地图
 var btn_buildmap_action=function() {
-	/*
-	$('td.site').each(function(i) {
-		//console.log($(this).attr("picked"));
-		var item = $(this); item.children('input').hide();
-		var v=item.children('input').val(); item.attr('score',v)
-		console.log(v);
-	});
-	*/
-	var round=$('#round').val();
-	var html = '<div>';
+	var round=$('#round').val(); var totalscores = [0,0,0,0];
+	var html = '<div class="seedleft">';
 	html += '<table id="map" class="war">';
 	html += make_table_HT();
 	for (var i = 0; i < rows.length; i++) {
@@ -193,10 +198,11 @@ var btn_buildmap_action=function() {
 		html += '<tr><th class="headline">' + r + '</th>';
 		for (var j = 0; j < cols.length; j++) {
 			var c = cols[j]; var id = '#template' + ' #' + r + c; //console.log(id);
-			var cs = color_of_td(i, j, round); var score = $(id).attr('score');
-			score = (score == undefined ? '0' : score);
+			var cs = color_of_td(i, j, round); var score = parseInt($(id).attr('score'));
+			score = (isNaN(score) ? 0 : score);
 			//console.log(score);
 			if (cs.length > 0) {
+				var index = colors.indexOf(cs[0]); totalscores[index] += score;
 				html += '<td id="' + r + c + '" style="background-color: ' + cs[0] + '">' + score + '</td>';
 			} else {
 				html += '<td id="' + r + c + '">' + score + '</td>';
@@ -204,18 +210,82 @@ var btn_buildmap_action=function() {
 		}
 		html += '<th class="headline">' + r + '</th></tr>';
 	};
+	daily_summary[round] = totalscores;
 	html += make_table_HT();
-	html += '</table>';
-	html += '<table id="daily" class="menu"><th><td>aaaaa</td></th></table>';
-	html += '</div>';
-	// var nt=document.createElement("table");
-	// nt.innerHTML=html;
+	html += '</table></div>';
+	// console.log(totalscores);
+
+	var sum=calculate_daily_sum(round);
+	console.log(sum);
+	html += '<div class="seedright"><table id="daily" class="war"><tr width="100%"><td>颜色</td><td>当日积分</td><td>总积分</td></tr>';
+	for (var i = 0; i < totalscores.length; i++) {
+		var c = colors[i]; var score = totalscores[i];
+		html += '<tr><td style="background-color: ' + c + '">' + i + '</td><td>' + score + '</td><td>' + sum[i] + '</td></tr>';
+	}
+	html += '</table></div>';
 	$('#stub').before(html);
 }
 
-// 导入地图
-var btn_importmap_action=function() {
+// 生成模版地图
+var build_template_table=function() {
+	var html = '<table id="template" class="plist">';
+	html += make_table_HT();
+	for (var i = 0; i < rows.length; i++) {
+		var r = rows[i];
+		html += '<tr><th class="headline">' + r + '</th>';
+		for (var j = 0; j < cols.length; j++) {
+			var c = cols[j];
+			html += '<td id="' + r + c + '" class="site"><input type="text" disabled="disabled" /></td>';
+		}
+		html += '<th class="headline">' + r + '</th></tr>';
+	};
+	html += make_table_HT();
+	$('#template').html(html);
+	$("#template td.site").click(td_action);
+}
 
+// var clear_template_table=function() {
+// 	$('#template td.site').each(function(i) {
+// 		var item = $(this); 
+// 		item.removeAttr('score'); item.removeAttr('type');
+// 		item.html('<input type="text" disabled="disabled">');
+// 		// TODO: need clear colspan and rowspan
+// 	});
+// }
+
+// 导入地图
+var btn_importmap_action=function(text) {
+	build_template_table();
+
+	let json = JSON.parse(text); var list = new Array;
+	for (var i=0; i<json.length; i++) {
+		var item = json[i]; var id = item.id; var type = item.type; 
+		$('#'+id).attr('score', item.score); $('#'+id).attr('type', type); 
+		if (type == 'lake') {
+			$('#'+id).children("input").hide(); 
+			$('#'+id).append('<img src="lake.png" width="100%" height="100%">'); 
+		} else if (type == 'hill' || type == 'bank') {
+			var index_row = rows.indexOf(id.charAt(0)); var index_col = cols.indexOf(id.substring(1));
+			$('#'+id).attr("rowspan", "2").attr("colspan", "2"); $('#'+id).children("input").hide(); 
+			list.push('#'+rows[index_row] + cols[index_col+1]); list.push('#'+rows[index_row+1] + cols[index_col]);
+			list.push('#'+rows[index_row+1] + cols[index_col+1]);
+			if (type == "hill") {
+				$('#'+id).append('<img src="hill.png" width="100%" height="100%">');
+			} else {
+				$('#'+id).append('银行<br/>3680');
+			}
+		} else {
+			$('#'+id).append(item.score);
+		}
+	}
+	list.map(function(g) { $(g).remove(); });
+	
+	/*
+	for (var i in json) {
+		var item = json[i];
+		console.log(item);
+		//console.log(item.id+','+item.score+','+item.type);
+	}*/
 }
 
 //前端读取本地文件的内容   下面代码中的this.result即为获取到的内容
@@ -224,10 +294,9 @@ function upload(input) {  //支持chrome IE10
         var file = input.files[0];  
         filename = file.name.split(".")[0];  
         var reader = new FileReader();  
-        reader.onload = function() {  
-            console.log(this.result);
+        reader.onload = function() {
             let json = JSON.parse(this.result);
-            alert(json);
+            btn_importmap_action(json);
         }  
         reader.readAsText(file);  
     }   
@@ -237,9 +306,8 @@ function upload(input) {  //支持chrome IE10
         xmlDoc = new ActiveXObject("Microsoft.XMLDOM");   
         xmlDoc.async = false;   
         xmlDoc.load(input.value);
-        console.log(xmlDoc.xml);
-		let json = JSON.parse(xmlDoc.xml);   
-        alert(json);
+		let json = JSON.parse(xmlDoc.xml);
+		btn_importmap_action(json);
     }   
     //支持FF  
     else if (document.implementation && document.implementation.createDocument) {   
@@ -247,9 +315,8 @@ function upload(input) {  //支持chrome IE10
         xmlDoc = document.implementation.createDocument("", "", null);   
         xmlDoc.async = false;   
         xmlDoc.load(input.value);
-		console.log(xmlDoc.xml);
-		let json = JSON.parse(xmlDoc.xml);   
-        alert(json);
+		let json = JSON.parse(xmlDoc.xml);
+		btn_importmap_action(json);
     } else {   
         alert('error');   
     }   
@@ -260,12 +327,12 @@ var btn_exportmap_action=function() {
 	var json = '[', comma = '';
 	$('#template td.site').each(function(i) {
 		var item = $(this); 
-		var id = item.attr("id"); var v = item.attr("score");
+		var id = item.attr("id"); var v = item.attr("score"); var type = item.attr("type");
 		//console.log(id + ":" + v);
-		if (v != 0 && v != undefined) {
-			json += comma + '{"' + id + '":' + v + '}';
-			comma = ',';
-		}
+		type = (type == null ? "node" : type);
+		if ((v == undefined || v == 0) && type == 'node') { return; }
+		json += comma + '{"id":"' + id + '","score":' + v + ',"type":"' + type + '"}';
+		comma = ',';
 	});
 	json += ']';
 	var downloadFile = function(content) {
@@ -282,9 +349,7 @@ $(document).ready(function(){
   $("#lake").click(button_action);
   $("#hill").click(button_action);
   $("#bank").click(button_action);
-  $("td").click(td_action);
   $("input#editor").click(btn_editmap_action);
   $("input#build").click(btn_buildmap_action);
-  $("input#import").click(btn_importmap_action);
   $("input#export").click(btn_exportmap_action);
 });
