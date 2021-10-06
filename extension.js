@@ -1,5 +1,6 @@
 var cols = ['01','02','03','04','05','06','07','08','09','10','11','12','13','14','15','16','17','18','19','20'];
 var rows = ['T','S','R','Q','P','O','N','M','L','K','J','I','H','G','F','E','D','C','B','A'];
+var levels = {'node': 160, 'base':320, 'lv0':240, 'lv1':480, 'lv2':800, 'lv3':1280, 'lv4':1600, 'bank':3680}
 var bases = ['T15','F20','A06','O01'];
 var colors = ['red','green','blue','yellow'];
 var daily_summary = {};
@@ -55,7 +56,7 @@ var td_contains=function(array, td) {
 }
 var td_transform=function(all, type) {
 	var r=false;
-	var score = (type=='bank' ? 3680 : 0); 
+	var score = (type=='bank' ? levels['bank'] : 0); 
 	if (type == "lake") {
 		r=true;
 		all.map(function(g) { 
@@ -84,7 +85,7 @@ var td_transform=function(all, type) {
 			if (type == "hill") {
 				$(grid1).append('<img src="hill.png" width="100%" height="100%">');
 			} else {
-				$(grid1).append('银行<br/>3680');
+				$(grid1).append('银行<br/>' + levels['bank']);
 			}
 		}
 	}
@@ -234,8 +235,17 @@ var build_template_table=function() {
 		var r = rows[i];
 		html += '<tr><th class="headline">' + r + '</th>';
 		for (var j = 0; j < cols.length; j++) {
-			var c = cols[j];
-			html += '<td id="' + r + c + '" class="site"><input type="text" disabled="disabled" /></td>';
+			var c = cols[j]; var id = r + c;
+			if (id == 'K10' || id == 'K11' || id == 'J10' || id == 'J11') { //bank
+				if (id == 'K10') {
+					html += '<td id="' + id + '" class="site" rowspan="2" colspan="2" type="bank" score="' + levels['bank'] + '"><input type="text" disabled="disabled" style="display: none;" />银行<br/>' + levels['bank'] + '</td>';
+				}
+			} else if ((index_base = bases.indexOf(id)) >= 0) { // base
+				var color = colors[index_base];
+				html += '<td id="' + id + '" class="site" score="' + levels['base'] + '" style="background-color: ' + color + '"><input type="text" disabled="disabled" value="' + levels['base'] + '" /></td>';
+			} else {
+				html += '<td id="' + id + '" class="site" score="' + levels['node'] + '"><input type="text" disabled="disabled" value="' + levels['node'] + '" /></td>';
+			}
 		}
 		html += '<th class="headline">' + r + '</th></tr>';
 	};
@@ -259,23 +269,31 @@ var btn_importmap_action=function(text) {
 
 	let json = JSON.parse(text); var list = new Array;
 	for (var i=0; i<json.length; i++) {
-		var item = json[i]; var id = item.id; var type = item.type; 
-		$('#'+id).attr('score', item.score); $('#'+id).attr('type', type); 
+		var item = json[i]; var id = item.id; var type = item.type; var grid = $('#template #'+id);
+		grid.attr('score', item.score); grid.attr('type', type); 
 		if (type == 'lake') {
-			$('#'+id).children("input").hide(); 
-			$('#'+id).append('<img src="lake.png" width="100%" height="100%">'); 
+			grid.children("input").hide(); 
+			if (grid.children('img') == null) {
+				grid.append('<img src="lake.png" width="100%" height="100%">'); 
+			}
 		} else if (type == 'hill' || type == 'bank') {
 			var index_row = rows.indexOf(id.charAt(0)); var index_col = cols.indexOf(id.substring(1));
-			$('#'+id).attr("rowspan", "2").attr("colspan", "2"); $('#'+id).children("input").hide(); 
-			list.push('#'+rows[index_row] + cols[index_col+1]); list.push('#'+rows[index_row+1] + cols[index_col]);
-			list.push('#'+rows[index_row+1] + cols[index_col+1]);
+			grid.attr("rowspan", "2").attr("colspan", "2"); grid.children("input").hide(); 
+			list.push('#template #'+rows[index_row] + cols[index_col+1]); list.push('#template #'+rows[index_row+1] + cols[index_col]);
+			list.push('#template #'+rows[index_row+1] + cols[index_col+1]);
 			if (type == "hill") {
-				$('#'+id).append('<img src="hill.png" width="100%" height="100%">');
+				if (grid.children('img') == null) {
+					grid.append('<img src="hill.png" width="100%" height="100%">');
+				}
 			} else {
-				$('#'+id).append('银行<br/>3680');
+				grid.empty(); grid.append('银行<br/>' + levels['bank']);
 			}
 		} else {
-			$('#'+id).append(item.score);
+			if (grid.children('input') == null) {
+				grid.append('<input type="text" disabled="disabled" value="' + item.score + '" />');
+			} else {
+				grid.children('input').val(item.score);
+			}
 		}
 	}
 	list.map(function(g) { $(g).remove(); });
@@ -352,4 +370,5 @@ $(document).ready(function(){
   $("input#editor").click(btn_editmap_action);
   $("input#build").click(btn_buildmap_action);
   $("input#export").click(btn_exportmap_action);
+  build_template_table();
 });
