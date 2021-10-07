@@ -339,7 +339,10 @@ var btn_buildmap_action=function() {
 	html += '</table></div>';
 	// console.log(totalscores);
 
-	html += '<div class="seedright"><table id="daily" class="war"><tr width="100%"><td>颜色</td><td>当日积分</td><td>总积分</td></tr>';
+	let options=$("#round option:selected"); let round_text=options.text();
+	html += '<div class="seedright"><table id="daily" class="war">';
+	html += '<tr width="100%"><td colspan=3>'+round_text+'</td></tr>';
+	html += '<tr width="100%"><td>颜色</td><td>当日积分</td><td>总积分</td></tr>';
 	for (var i = 0; i < bases.length; i++) {
 		var base = bases[i]; var c = colors[i]; 
 		var cur_score = raw_data.rounds[round][base].score; var last_score = raw_data.rounds[prev_round][base].score;
