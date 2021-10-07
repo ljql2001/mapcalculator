@@ -3,7 +3,76 @@ var rows = ['T','S','R','Q','P','O','N','M','L','K','J','I','H','G','F','E','D',
 var levels = {'node': 160, 'base':320, 'lv0':240, 'lv1':480, 'lv2':800, 'lv3':1280, 'lv4':1600, 'bank':3680}
 var bases = ['T15','F20','A06','O01'];
 var colors = ['red','green','blue','yellow'];
-var daily_summary = {};
+var raw_data = {"rounds":{0:{"grids":{}}}}
+//{"rounds":{0:{"grids":{}, "T15":{"zones":[],"score":1000},"F20":[]}}}
+
+var initialize=function() {
+	build_template_table();
+	raw_data_init();
+}
+
+var raw_data_init=function() {
+	bases.forEach(function(i) {
+		raw_data.rounds[0].grids[i]=i;
+		raw_data.rounds[0][i]={"zones":[i],"score":1000};
+	});
+}
+
+var raw_data_is_near=function(data,base,grid) {
+	var type = template_td_type(grid); if (type != null && type != 'node') { return false; }
+	var r=grid.charAt(0), c=grid.substring(1);
+	var ri=rows.indexOf(r), ci=cols.indexOf(c);
+	if (ri < 0 || ci < 0) { return false; }
+	var nearest=[];
+	if (ri-1 >= 0) { nearest.push(rows[ri-1]+c); }
+	if (ri+1 < rows.length) { nearest.push(rows[ri+1]+c); }
+	if (ci-1 >= 0) { nearest.push(r+cols[ci-1]); }
+	if (ci+1 < cols.length) { nearest.push(r+cols[ci+1]); }
+	for (var item of nearest) {
+		// console.log("base:"+base+',item:'+item+',nearest:'+nearest);
+		if ((type == null || type == 'node') && data.grids[item] == base) { return true; }
+	}
+	return false;
+}
+
+var raw_data_calc_score=function(round,base) {
+	var prev = raw_data.rounds[round-1], cur = raw_data.rounds[round];
+	var sum = prev[base].score; var zones=cur[base].zones;
+	for (var id of zones) {
+		var score = template_td_score(id); 
+		console.log('sum:'+sum+',aaa:'+score);
+		sum += score;
+	}
+	// console.log(base+': sum='+sum);
+	return sum;
+}
+
+var raw_data_add_grid=function(round,base,grid,forced) {
+	var prev_round = round-1; var prev = raw_data.rounds[prev_round];
+	// console.log(prev);
+	if (raw_data_is_near(prev,base,grid)) {
+		var last=raw_data.rounds[round].grids[grid];
+		if (forced || last == null) {
+			if (last != null) {
+				console.log('REMOVED!!');
+				// modify the last owner and score
+				var index = raw_data.rounds[round][last].zones.indexOf(grid);
+				if (index >= 0) { 
+					raw_data.rounds[round][last].zones.splice(index,1); 
+					raw_data.rounds[round][last].score=raw_data_calc_score(round,last);
+				}
+			}
+			raw_data.rounds[round].grids[grid]=base;
+			if (raw_data.rounds[round][base].zones.indexOf(grid) < 0) { raw_data.rounds[round][base].zones.push(grid); }
+			var sum = raw_data_calc_score(round,base);
+			raw_data.rounds[round][base].score=sum;
+			//console.log(raw_data.rounds[round]);
+			// raw_data.rounds[round].
+		} else {
+			// console.log(grid+' already has an last '+last+'!');
+		}
+	}
+}
 
 var button_action=function() {
 	//return function() {
@@ -127,6 +196,7 @@ var td_action=function() {
 	
 }
 
+// "编辑"按钮
 var btn_editmap_action=function() {
 	td_selection($(this));
 	var selected=$(this).attr('picked')=='on';
@@ -176,52 +246,105 @@ var color_of_td=function(row, col, round) {
 	return r;
 }
 
-// 计算累计总积分
-var calculate_daily_sum=function(day) {
-	var r = [0,0,0,0];
-	for (var i=1; i<=day; i++) {
-		var daily = daily_summary[i]; if (daily == null) { continue; }
-		for (var j=0; j<daily.length; j++) {
-			r[j] += daily[j];
-		}
+var raw_data_start_calc=function(round) {
+	var prev_round = round - 1; var prev = JSON.parse(JSON.stringify(raw_data.rounds[prev_round]));
+	if (prev == null) {
+		alert('错误：轮次必须连贯！')
+		return false;
 	}
+	raw_data.rounds[round]=prev;
+	return true;
+}
+
+var raw_data_calc_td=function(row, col, round) {
+	for (var i in bases) {
+		var b = bases[i]; var distance = Math.abs(b.charCodeAt(0) - rows[row].charCodeAt(0)) + Math.abs(parseInt(b.substring(1)) - parseInt(cols[col]));
+		if (distance > round) { continue; }
+		raw_data_add_grid(round,b,rows[row]+cols[col],false);
+	}
+}
+
+// // 计算累计总积分
+// var calculate_daily_sum=function(day) {
+// 	var r = [0,0,0,0];
+// 	for (var i=1; i<=day; i++) {
+// 		var daily = daily_summary[i]; if (daily == null) { continue; }
+// 		for (var j=0; j<daily.length; j++) {
+// 			r[j] += daily[j];
+// 		}
+// 	}
+// 	return r;
+// }
+
+var template_td_score=function(id) {
+	var r = parseInt($('#template #'+id).attr('score'));
+	return (isNaN(r) ? 0 : r);
+}
+
+var template_td_type=function(id) {
+	var r = $('#template #'+id).attr('type');
+	return r;
+}
+
+var template_td_rowspan=function(id) {
+	var r = parseInt($('#template #'+id).attr('rowspan'));
+	return r;
+}
+
+var template_td_colspan=function(id) {
+	var r = parseInt($('#template #'+id).attr('colspan'));
+	return r;
+}
+
+var owner_of_grid=function(round,id) {
+	if (raw_data.rounds[round] == null || raw_data.rounds[round].grids == null) { return null; }
+	var r = raw_data.rounds[round].grids[id];
+	if (r == null) { return null; }
 	return r;
 }
 
 // 生成结算地图
 var btn_buildmap_action=function() {
-	var round=$('#round').val(); var totalscores = [0,0,0,0];
+	var round=$('#round').val(); var prev_round = round - 1;
+	raw_data_start_calc(round);
 	var html = '<div class="seedleft">';
 	html += '<table id="map" class="war">';
-	html += make_table_HT();
+	html += make_table_HT(); var span_tds = [];
+	// console.log(raw_data.rounds);
 	for (var i = 0; i < rows.length; i++) {
 		var r = rows[i];
 		html += '<tr><th class="headline">' + r + '</th>';
 		for (var j = 0; j < cols.length; j++) {
-			var c = cols[j]; var id = '#template' + ' #' + r + c; //console.log(id);
-			var cs = color_of_td(i, j, round); var score = parseInt($(id).attr('score'));
-			score = (isNaN(score) ? 0 : score);
-			//console.log(score);
-			if (cs.length > 0) {
-				var index = colors.indexOf(cs[0]); totalscores[index] += score;
-				html += '<td id="' + r + c + '" style="background-color: ' + cs[0] + '">' + score + '</td>';
+			var c = cols[j]; var id = r+c;
+			var score = template_td_score(id), rowspan = template_td_rowspan(id), colspan = template_td_colspan(id);  //console.log(score);
+			var span = ''; if (rowspan > 0) { span_tds.push(rows[i+1]+c); span += ' rowspan='+rowspan; }
+			if (colspan > 0) { 
+				span_tds.push(r+cols[j+1]); span += ' colspan='+colspan;
+				if (rowspan > 0) { span_tds.push(rows[i+1]+cols[j+1]); }
+			}
+			if (span_tds.indexOf(id) >= 0) { continue; }
+			raw_data_calc_td(i, j, round);
+			// console.log(raw_data.rounds[round]);
+			var owner = owner_of_grid(round,id); var index = bases.indexOf(owner);
+			if (index >= 0) {
+				var color = colors[index];
+				html += '<td id="' + id + '" style="background-color: ' + color + '"' + span + '>' + score + '</td>';
 			} else {
-				html += '<td id="' + r + c + '">' + score + '</td>';
+				html += '<td id="' + id + '"' + span + '>' + score + '</td>';
 			}
 		}
 		html += '<th class="headline">' + r + '</th></tr>';
 	};
-	daily_summary[round] = totalscores;
 	html += make_table_HT();
 	html += '</table></div>';
 	// console.log(totalscores);
 
-	var sum=calculate_daily_sum(round);
-	console.log(sum);
 	html += '<div class="seedright"><table id="daily" class="war"><tr width="100%"><td>颜色</td><td>当日积分</td><td>总积分</td></tr>';
-	for (var i = 0; i < totalscores.length; i++) {
-		var c = colors[i]; var score = totalscores[i];
-		html += '<tr><td style="background-color: ' + c + '">' + i + '</td><td>' + score + '</td><td>' + sum[i] + '</td></tr>';
+	for (var i = 0; i < bases.length; i++) {
+		var base = bases[i]; var c = colors[i]; 
+		var cur_score = raw_data.rounds[round][base].score; var last_score = raw_data.rounds[prev_round][base].score;
+		var score = cur_score - last_score;
+		html += '<tr><td style="background-color: ' + c + '">' + i + '</td><td>' + score + '</td><td>' + cur_score + '</td></tr>';
 	}
 	html += '</table></div>';
 	$('#stub').before(html);
@@ -235,7 +358,7 @@ var build_template_table=function() {
 		var r = rows[i];
 		html += '<tr><th class="headline">' + r + '</th>';
 		for (var j = 0; j < cols.length; j++) {
-			var c = cols[j]; var id = r + c;
+			var c = cols[j]; var id = r+c;
 			if (id == 'K10' || id == 'K11' || id == 'J10' || id == 'J11') { //bank
 				if (id == 'K10') {
 					html += '<td id="' + id + '" class="site" rowspan="2" colspan="2" type="bank" score="' + levels['bank'] + '"><input type="text" disabled="disabled" style="display: none;" />银行<br/>' + levels['bank'] + '</td>';
@@ -254,15 +377,6 @@ var build_template_table=function() {
 	$("#template td.site").click(td_action);
 }
 
-// var clear_template_table=function() {
-// 	$('#template td.site').each(function(i) {
-// 		var item = $(this); 
-// 		item.removeAttr('score'); item.removeAttr('type');
-// 		item.html('<input type="text" disabled="disabled">');
-// 		// TODO: need clear colspan and rowspan
-// 	});
-// }
-
 // 导入地图
 var btn_importmap_action=function(text) {
 	build_template_table();
@@ -273,7 +387,7 @@ var btn_importmap_action=function(text) {
 		grid.attr('score', item.score); grid.attr('type', type); 
 		if (type == 'lake') {
 			grid.children("input").hide(); 
-			if (grid.children('img') == null) {
+			if (grid.children('img').length <= 0) {
 				grid.append('<img src="lake.png" width="100%" height="100%">'); 
 			}
 		} else if (type == 'hill' || type == 'bank') {
@@ -282,14 +396,14 @@ var btn_importmap_action=function(text) {
 			list.push('#template #'+rows[index_row] + cols[index_col+1]); list.push('#template #'+rows[index_row+1] + cols[index_col]);
 			list.push('#template #'+rows[index_row+1] + cols[index_col+1]);
 			if (type == "hill") {
-				if (grid.children('img') == null) {
+				if (grid.children('img').length <= 0) {
 					grid.append('<img src="hill.png" width="100%" height="100%">');
 				}
 			} else {
 				grid.empty(); grid.append('银行<br/>' + levels['bank']);
 			}
 		} else {
-			if (grid.children('input') == null) {
+			if (grid.children('input').length <= 0) {
 				grid.append('<input type="text" disabled="disabled" value="' + item.score + '" />');
 			} else {
 				grid.children('input').val(item.score);
@@ -298,15 +412,21 @@ var btn_importmap_action=function(text) {
 	}
 	list.map(function(g) { $(g).remove(); });
 	
-	/*
-	for (var i in json) {
-		var item = json[i];
-		console.log(item);
-		//console.log(item.id+','+item.score+','+item.type);
-	}*/
+	var statistics = {};
+	$('#template td.site').each(function(i) {
+		var grid = $(this); var score = grid.attr("score"); 
+		var v = parseInt(statistics[score]); var count = isNaN(v) ? 0 : v;
+		statistics[score] = count + 1;
+	});
+	var html = '<div id="tplright" class="seedright"><table id="sum" class="war"><tr width="100%"><td>分数档位</td><td>地块数量</td></tr>';
+	for (var key in statistics) {
+		html += '<tr><td>'+key+'</td><td>'+statistics[key]+'</td></tr>';
+	}
+	html += '</table></div>';
+	$('#tplleft').after(html);
 }
 
-//前端读取本地文件的内容   下面代码中的this.result即为获取到的内容
+//前端读取本地文件的内容 
 function upload(input) {  //支持chrome IE10  
     if (window.FileReader) {  
         var file = input.files[0];  
@@ -363,6 +483,12 @@ var btn_exportmap_action=function() {
     downloadFile(json);
 }
 
+var test=function() {
+	//raw_data_add_grid(1,'T15','T01');
+	// var r=raw_data_is_near(raw_data.rounds[0].grids,'T15', 'T13');
+	// console.log(r);
+}
+
 $(document).ready(function(){
   $("#lake").click(button_action);
   $("#hill").click(button_action);
@@ -370,5 +496,6 @@ $(document).ready(function(){
   $("input#editor").click(btn_editmap_action);
   $("input#build").click(btn_buildmap_action);
   $("input#export").click(btn_exportmap_action);
-  build_template_table();
+  $("input#test").click(test);
+  initialize();
 });

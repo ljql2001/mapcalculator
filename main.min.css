@@ -2,9 +2,14 @@
    margin: 0;
    padding: 0;
  }
+ body {
+ 	width: 900px;
+ }
+ td {
+ 	font-size: 8px;
+ }
  .plist {
 	width: 20px;
- 	margin: 100px auto;
  }
  .plist, .war{
  	border: 1px solid #aaa;
@@ -27,13 +32,12 @@
  }
  .plist td{
  padding: 0;
- 
  }
 tr.headline,th.headline{
  background-color: #379;
  }
  .plist td input{
- width: 40px;
+ width: 32px;
  text-align: center;
  border: none;
  outline-style: none;
@@ -47,15 +51,16 @@ tr.headline,th.headline{
  font-family: "Î¢ÈíÑÅºÚ";
  text-align: center;
  padding: 4px;
- }
- div {
+}
+div {
  display: inline;
- float: left;
+ background-color: #fff;
 }
 div.seedleft {
 width: 70%;
+float: left;
 }
 div.seedright {
-width: 30%;
+float: right;
 }
 
