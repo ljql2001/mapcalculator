@@ -305,52 +305,55 @@ var owner_of_grid=function(round,id) {
 
 // 生成结算地图
 var btn_buildmap_action=function() {
-	var round=$('#round').val(); var prev_round = round - 1;
-	raw_data_start_calc(round);
-	var html = '<div class="seedleft">';
-	html += '<table id="map" class="war">';
-	html += make_table_HT(); var span_tds = [];
-	// console.log(raw_data.rounds);
-	for (var i = 0; i < rows.length; i++) {
-		var r = rows[i];
-		html += '<tr><th class="headline">' + r + '</th>';
-		for (var j = 0; j < cols.length; j++) {
-			var c = cols[j]; var id = r+c;
-			var score = template_td_score(id), rowspan = template_td_rowspan(id), colspan = template_td_colspan(id);  //console.log(score);
-			var span = ''; if (rowspan > 0) { span_tds.push(rows[i+1]+c); span += ' rowspan='+rowspan; }
-			if (colspan > 0) { 
-				span_tds.push(r+cols[j+1]); span += ' colspan='+colspan;
-				if (rowspan > 0) { span_tds.push(rows[i+1]+cols[j+1]); }
+	var total_round=$('#round').val(); 
+	for (var round = 1; round <= total_round; round++) {
+		var prev_round = round - 1;
+		raw_data_start_calc(round);
+		var html = '<div class="seedleft">';
+		html += '<table id="map" class="war">';
+		html += make_table_HT(); var span_tds = [];
+		// console.log(raw_data.rounds);
+		for (var i = 0; i < rows.length; i++) {
+			var r = rows[i];
+			html += '<tr><th class="headline">' + r + '</th>';
+			for (var j = 0; j < cols.length; j++) {
+				var c = cols[j]; var id = r+c;
+				var score = template_td_score(id), rowspan = template_td_rowspan(id), colspan = template_td_colspan(id);  //console.log(score);
+				var span = ''; if (rowspan > 0) { span_tds.push(rows[i+1]+c); span += ' rowspan='+rowspan; }
+				if (colspan > 0) { 
+					span_tds.push(r+cols[j+1]); span += ' colspan='+colspan;
+					if (rowspan > 0) { span_tds.push(rows[i+1]+cols[j+1]); }
+				}
+				if (span_tds.indexOf(id) >= 0) { continue; }
+				raw_data_calc_td(i, j, round);
+				// console.log(raw_data.rounds[round]);
+				var owner = owner_of_grid(round,id); var index = bases.indexOf(owner);
+				if (index >= 0) {
+					var color = colors[index];
+					html += '<td id="' + id + '" style="background-color: ' + color + '"' + span + '>' + score + '</td>';
+				} else {
+					html += '<td id="' + id + '"' + span + '>' + score + '</td>';
+				}
 			}
-			if (span_tds.indexOf(id) >= 0) { continue; }
-			raw_data_calc_td(i, j, round);
-			// console.log(raw_data.rounds[round]);
-			var owner = owner_of_grid(round,id); var index = bases.indexOf(owner);
-			if (index >= 0) {
-				var color = colors[index];
-				html += '<td id="' + id + '" style="background-color: ' + color + '"' + span + '>' + score + '</td>';
-			} else {
-				html += '<td id="' + id + '"' + span + '>' + score + '</td>';
-			}
-		}
-		html += '<th class="headline">' + r + '</th></tr>';
-	};
-	html += make_table_HT();
-	html += '</table></div>';
-	// console.log(totalscores);
+			html += '<th class="headline">' + r + '</th></tr>';
+		};
+		html += make_table_HT();
+		html += '</table></div>';
+		// console.log(totalscores);
 
-	let options=$("#round option:selected"); let round_text=options.text();
-	html += '<div class="seedright"><table id="daily" class="war">';
-	html += '<tr width="100%"><td colspan=3>'+round_text+'</td></tr>';
-	html += '<tr width="100%"><td>颜色</td><td>本轮积分</td><td>总积分</td></tr>';
-	for (var i = 0; i < bases.length; i++) {
-		var base = bases[i]; var c = colors[i]; 
-		var cur_score = raw_data.rounds[round][base].score; var last_score = raw_data.rounds[prev_round][base].score;
-		var score = cur_score - last_score;
-		html += '<tr><td style="background-color: ' + c + '">' + i + '</td><td>' + score + '</td><td>' + cur_score + '</td></tr>';
+		let options=$("#round option:selected"); let round_text=options.text();
+		html += '<div class="seedright"><table id="daily" class="war">';
+		html += '<tr width="100%"><td colspan=3>'+round_text+'</td></tr>';
+		html += '<tr width="100%"><td>颜色</td><td>本轮积分</td><td>总积分</td></tr>';
+		for (var i = 0; i < bases.length; i++) {
+			var base = bases[i]; var c = colors[i]; 
+			var cur_score = raw_data.rounds[round][base].score; var last_score = raw_data.rounds[prev_round][base].score;
+			var score = cur_score - last_score;
+			html += '<tr><td style="background-color: ' + c + '">' + i + '</td><td>' + score + '</td><td>' + cur_score + '</td></tr>';
+		}
+		html += '</table></div>';
+		$('#stub').before(html);
 	}
-	html += '</table></div>';
-	$('#stub').before(html);
 }
 
 // 生成模版地图
