@@ -50,25 +50,24 @@ var raw_data_add_grid=function(round,base,grid,forced) {
 	var prev_round = round-1; var prev = raw_data.rounds[prev_round];
 	// console.log(prev);
 	if (raw_data_is_near(prev,base,grid)) {
-		var last=raw_data.rounds[round].grids[grid];
-		if (forced || last == null) {
-			if (last != null) {
+		var current=raw_data.rounds[round].grids[grid];
+		if (forced || current == null) {
+			if (current != null) {
 				console.log('REMOVED!!');
-				// modify the last owner and score
-				var index = raw_data.rounds[round][last].zones.indexOf(grid);
+				// modify the current owner and score
+				var index = raw_data.rounds[round][current].zones.indexOf(grid);
 				if (index >= 0) { 
-					raw_data.rounds[round][last].zones.splice(index,1); 
-					raw_data.rounds[round][last].score=raw_data_calc_score(round,last);
+					raw_data.rounds[round][current].zones.splice(index,1); 
+					raw_data.rounds[round][current].score=raw_data_calc_score(round,current);
 				}
 			}
 			raw_data.rounds[round].grids[grid]=base;
 			if (raw_data.rounds[round][base].zones.indexOf(grid) < 0) { raw_data.rounds[round][base].zones.push(grid); }
-			var sum = raw_data_calc_score(round,base);
-			raw_data.rounds[round][base].score=sum;
-			//console.log(raw_data.rounds[round]);
-			// raw_data.rounds[round].
+			// var sum = raw_data_calc_score(round,base);
+			// raw_data.rounds[round][base].score=sum;
+			// //console.log(raw_data.rounds[round]);
 		} else {
-			// console.log(grid+' already has an last '+last+'!');
+			// console.log(grid+' already has an current '+current+'!');
 		}
 	}
 }
@@ -263,6 +262,28 @@ var raw_data_calc_td=function(row, col, round) {
 	}
 }
 
+// calc sum score for each round
+var raw_data_calc_round_sum=function(round) {
+	for (var i in bases) {
+		var base = bases[i];
+		var sum = raw_data_calc_score(round,base);
+		raw_data.rounds[round][base].score=sum;
+	}
+}
+
+var raw_data_round_lowest_score=function(round) {
+	if (round < 13) { return -1; }
+
+	var index = -1; var lowest = 100000000;
+	for (var i in bases) {
+		var base = bases[i]; var sum = raw_data.rounds[round][base].score;
+		if (lowest > sum) {
+			index = i; lowest = sum;
+		}
+	}
+	return index;
+}
+
 // // 计算累计总积分
 // var calculate_daily_sum=function(day) {
 // 	var r = [0,0,0,0];
@@ -313,6 +334,7 @@ var btn_buildmap_action=function() {
 		html += make_table_HT(); var span_tds = [];
 		// console.log(raw_data.rounds);
 		for (var i = 0; i < rows.length; i++) {
+			// generate the war map per round
 			var r = rows[i];
 			html += '<tr><th class="headline">' + r + '</th>';
 			for (var j = 0; j < cols.length; j++) {
@@ -338,18 +360,26 @@ var btn_buildmap_action=function() {
 		};
 		html += make_table_HT();
 		html += '</table></div>';
-		// console.log(totalscores);
 
+		// calculate the sum score per round
+		raw_data_calc_round_sum(round);
+		let lucky = raw_data_round_lowest_score(round);
+
+		// generate the statistics table per round
 		let options=$("#round option"); let round_text=options[round-1].text; //console.log(round_text);
 		html += '<div class="seedright"><table id="daily" class="war">';
 		html += '<tr width="100%"><td colspan=3>'+round_text+'</td></tr>';
-		html += '<tr width="100%"><td>颜色</td><td>本轮积分</td><td>总积分</td></tr>';
+		html += '<tr><td>颜色</td><td>本轮积分</td><td>总积分</td></tr>';
+		var round_total = 0; var sum_total = 0;
 		for (var i = 0; i < bases.length; i++) {
-			var base = bases[i]; var c = colors[i]; 
-			var cur_score = raw_data.rounds[round][base].score; var last_score = raw_data.rounds[prev_round][base].score;
-			var score = cur_score - last_score;
-			html += '<tr><td style="background-color: ' + c + '">' + i + '</td><td>' + score + '</td><td>' + cur_score + '</td></tr>';
+			let base = bases[i]; let c = colors[i];
+			var cur_score = raw_data.rounds[round][base].score; let last_score = raw_data.rounds[prev_round][base].score;
+			let score = cur_score - last_score;
+			let bonus = (i == lucky ? '+'+levels['bank'] : ''); cur_score += (i == lucky ? levels['bank'] : 0);
+			round_total += (cur_score - last_score); sum_total += cur_score;
+			html += '<tr><td style="background-color: ' + c + '">' + i + '</td><td>' + score + bonus + '</td><td>' + cur_score + '</td></tr>';
 		}
+		html += '<tr><td>合计</td><td>'+round_total+'</td><td>'+sum_total+'</td></tr>';
 		html += '</table></div>';
 		$('#stub').before(html);
 	}
@@ -423,10 +453,15 @@ var btn_importmap_action=function(text) {
 		var v = parseInt(statistics[score]); var count = isNaN(v) ? 0 : v;
 		statistics[score] = count + 1;
 	});
+	var total = 0;
 	var html = '<div id="tplright" class="seedright"><table id="sum" class="war"><tr width="100%"><td>分数档位</td><td>地块数量</td></tr>';
 	for (var key in statistics) {
+		var s = parseInt(key); var score = isNaN(s) ? 0 : s;
+		var v = parseInt(statistics[key]); var count = isNaN(v) ? 0 : v;
+		total += s * v;
 		html += '<tr><td>'+key+'</td><td>'+statistics[key]+'</td></tr>';
 	}
+	html += '<tr><td>合计</td><td>'+total+'</td></tr>';
 	html += '</table></div>';
 	$('#tplleft').after(html);
 }
