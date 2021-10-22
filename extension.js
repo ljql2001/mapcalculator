@@ -40,7 +40,6 @@ var raw_data_calc_score=function(round,base) {
 	var sum = prev[base].score; var zones=cur[base].zones;
 	for (var id of zones) {
 		var score = template_td_score(id); 
-		console.log('sum:'+sum+',aaa:'+score);
 		sum += score;
 	}
 	// console.log(base+': sum='+sum);
@@ -341,7 +340,7 @@ var btn_buildmap_action=function() {
 		html += '</table></div>';
 		// console.log(totalscores);
 
-		let options=$("#round option:selected"); let round_text=options.text();
+		let options=$("#round option"); let round_text=options[round-1].text; //console.log(round_text);
 		html += '<div class="seedright"><table id="daily" class="war">';
 		html += '<tr width="100%"><td colspan=3>'+round_text+'</td></tr>';
 		html += '<tr width="100%"><td>颜色</td><td>本轮积分</td><td>总积分</td></tr>';
