@@ -376,6 +376,7 @@ var btn_buildmap_action=function() {
 			var cur_score = raw_data.rounds[round][base].score; let last_score = raw_data.rounds[prev_round][base].score;
 			let score = cur_score - last_score;
 			let bonus = (i == lucky ? '+'+levels['bank'] : ''); cur_score += (i == lucky ? levels['bank'] : 0);
+			if (i == lucky) { raw_data.rounds[round][base].score = cur_score; } // add bank score for lucky base
 			round_total += (cur_score - last_score); sum_total += cur_score;
 			html += '<tr><td style="background-color: ' + c + '">' + i + '</td><td>' + score + bonus + '</td><td>' + cur_score + '</td></tr>';
 		}
