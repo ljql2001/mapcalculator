@@ -35,6 +35,22 @@ var raw_data_is_near=function(data,base,grid) {
 	return false;
 }
 
+var raw_data_total_zones=function(round,base) {
+	let cur = raw_data.rounds[round]; let zones=cur[base].zones;
+	return zones.length;
+}
+
+var raw_data_level_zones=function(round,base) {
+	let cur = raw_data.rounds[round]; let zones=cur[base].zones;
+	var stats = new Array;
+	zones.forEach(function(i) {
+		let score = template_td_score(i);
+		var v = parseInt(stats[score]); var num = isNaN(v) ? 0 : v;
+		stats[score] = num + 1;
+	});
+	return stats;
+}
+
 var raw_data_calc_score=function(round,base) {
 	var prev = raw_data.rounds[round-1], cur = raw_data.rounds[round];
 	var sum = prev[base].score; var zones=cur[base].zones;
@@ -296,6 +312,14 @@ var raw_data_round_lowest_score=function(round) {
 // 	return r;
 // }
 
+var js_combine_array=function(main,part) {
+	part.forEach(function(num,score) {
+		let v = parseInt(main[score]); let count = (isNaN(v) ? 0 : v);
+		main[score] = count + num;
+	});
+	return main;
+} 
+
 var template_td_score=function(id) {
 	var r = parseInt($('#template #'+id).attr('score'));
 	return (isNaN(r) ? 0 : r);
@@ -316,10 +340,19 @@ var template_td_colspan=function(id) {
 	return r;
 }
 
-var owner_of_grid=function(round,id) {
+var template_owner_of_grid=function(round,id) {
 	if (raw_data.rounds[round] == null || raw_data.rounds[round].grids == null) { return null; }
 	var r = raw_data.rounds[round].grids[id];
 	if (r == null) { return null; }
+	return r;
+}
+
+var html_build_level_zones_tip=function(stats) {
+	var r = '', br = '';
+	stats.forEach(function(count,score) {
+		r += br + score + ': ' + count;
+		br = '\n';
+	});
 	return r;
 }
 
@@ -348,7 +381,7 @@ var btn_buildmap_action=function() {
 				if (span_tds.indexOf(id) >= 0) { continue; }
 				raw_data_calc_td(i, j, round);
 				// console.log(raw_data.rounds[round]);
-				var owner = owner_of_grid(round,id); var index = bases.indexOf(owner);
+				var owner = template_owner_of_grid(round,id); var index = bases.indexOf(owner);
 				if (index >= 0) {
 					var color = colors[index];
 					html += '<td id="' + id + '" style="background-color: ' + color + '"' + span + '>' + score + '</td>';
@@ -368,19 +401,23 @@ var btn_buildmap_action=function() {
 		// generate the statistics table per round
 		let options=$("#round option"); let round_text=options[round-1].text; //console.log(round_text);
 		html += '<div class="seedright"><table id="daily" class="war">';
-		html += '<tr width="100%"><td colspan=3>'+round_text+'</td></tr>';
-		html += '<tr><td>颜色</td><td>本轮积分</td><td>总积分</td></tr>';
-		var round_total = 0; var sum_total = 0;
+		html += '<tr width="100%"><td colspan=4>'+round_text+'</td></tr>';
+		html += '<tr><td>颜色</td><td>地块数量</td><td>本轮积分</td><td>总积分</td></tr>';
+		var round_total = 0; var sum_total = 0; var zones_total = 0; var zones_stats = new Array();
 		for (var i = 0; i < bases.length; i++) {
 			let base = bases[i]; let c = colors[i];
+			let zones = raw_data_total_zones(round,base); zones_total += zones;
+			let stats = raw_data_level_zones(round,base); let tip = html_build_level_zones_tip(stats);
+			js_combine_array(zones_stats,stats);
 			var cur_score = raw_data.rounds[round][base].score; let last_score = raw_data.rounds[prev_round][base].score;
 			let score = cur_score - last_score;
 			let bonus = (i == lucky ? '+'+levels['bank'] : ''); cur_score += (i == lucky ? levels['bank'] : 0);
 			if (i == lucky) { raw_data.rounds[round][base].score = cur_score; } // add bank score for lucky base
 			round_total += (cur_score - last_score); sum_total += cur_score;
-			html += '<tr><td style="background-color: ' + c + '">' + i + '</td><td>' + score + bonus + '</td><td>' + cur_score + '</td></tr>';
+			html += '<tr><td style="background-color: ' + c + '">' + i + '</td><td><div title="'+tip+'">'+zones+'</div></td><td>' + score + bonus + '</td><td>' + cur_score + '</td></tr>';
 		}
-		html += '<tr><td>合计</td><td>'+round_total+'</td><td>'+sum_total+'</td></tr>';
+		let tip = html_build_level_zones_tip(zones_stats);
+		html += '<tr><td>合计</td><td><div title="'+tip+'">'+zones_total+'</div></td><td>'+round_total+'</td><td>'+sum_total+'</td></tr>';
 		html += '</table></div>';
 		$('#stub').before(html);
 	}
@@ -502,32 +539,49 @@ function upload(input) {  //支持chrome IE10
 }
 
 // 导出地图
-var btn_exportmap_action=function() {
-	var json = '[', comma = '';
-	$('#template td.site').each(function(i) {
-		var item = $(this); 
-		var id = item.attr("id"); var v = item.attr("score"); var type = item.attr("type");
-		//console.log(id + ":" + v);
-		type = (type == null ? "node" : type);
-		if ((v == undefined || v == 0) && type == 'node') { return; }
-		json += comma + '{"id":"' + id + '","score":' + v + ',"type":"' + type + '"}';
-		comma = ',';
-	});
-	json += ']';
-	var downloadFile = function(content) {
-      // var file = new File([content], "标题.txt", { type: "text/plain;charset=utf-8" });
-      // saveAs(file);
+var btn_exportmap_action=function(ext) {
+	var downloadJson = function(content) { // download json
       var data = JSON.stringify(content);
       var blob = new Blob([data], {type: "text/plain;charset=utf-8"});
       saveAs(blob, "template.json");
     }
-    downloadFile(json);
+    var downloadCsv = function(content) { // download csv
+      var file = new File([content], "template.csv", { type: "text/plain;charset=utf-8" });
+      saveAs(file);
+    }
+
+	if (ext == 'json') {
+		var json = '[', comma = '';
+		$('#template td.site').each(function(i) {
+			var item = $(this); 
+			var id = item.attr("id"); var v = item.attr("score"); var type = item.attr("type");
+			//console.log(id + ":" + v);
+			type = (type == null ? "node" : type);
+			if ((v == undefined || v == 0) && type == 'node') { return; }
+			json += comma + '{"id":"' + id + '","score":' + v + ',"type":"' + type + '"}';
+			comma = ',';
+		});
+		json += ']';
+		text = json;
+		downloadJson(json);
+	} else {
+		var csv = '', comma = '';
+		rows.forEach(function(i) {
+			cols.forEach(function(j) {
+				let id = i + j; let score = template_td_score(id);
+				csv += comma + score; comma = ',';
+			});
+			csv += '\n'; comma = '';
+		});
+		downloadCsv(csv);
+	}
 }
 
+var download_json=function() { btn_exportmap_action('json'); }
+var download_csv=function() { btn_exportmap_action('csv'); }
+
 var test=function() {
-	//raw_data_add_grid(1,'T15','T01');
-	// var r=raw_data_is_near(raw_data.rounds[0].grids,'T15', 'T13');
-	// console.log(r);
+	download_csv();
 }
 
 $(document).ready(function(){
@@ -536,7 +590,7 @@ $(document).ready(function(){
   $("#bank").click(button_action);
   $("input#editor").click(btn_editmap_action);
   $("input#build").click(btn_buildmap_action);
-  $("input#export").click(btn_exportmap_action);
+  $("input#export").click(download_json);
   $("input#test").click(test);
   initialize();
 });
