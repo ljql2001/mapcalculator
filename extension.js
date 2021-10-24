@@ -1,10 +1,34 @@
+if (typeof jQuery === 'undefined') { throw 'no jquery'; }
+
 var cols = ['01','02','03','04','05','06','07','08','09','10','11','12','13','14','15','16','17','18','19','20'];
 var rows = ['T','S','R','Q','P','O','N','M','L','K','J','I','H','G','F','E','D','C','B','A'];
 var levels = {'node': 160, 'base':320, 'lv0':240, 'lv1':480, 'lv2':800, 'lv3':1280, 'lv4':1600, 'bank':3680}
 var bases = ['T06','F01','A15','O20'];
 var colors = ['red','green','blue','yellow'];
-var raw_data = {"rounds":{0:{"grids":{}}}}
-//{"rounds":{0:{"grids":{}, "T15":{"zones":[],"score":1000},"F20":[]}}}
+var raw_data = {"rounds":{0:{"grids":{}}}} 
+// 结构：
+// {
+// 	"rounds": {
+// 		轮次号（1～26）: {
+// 			"grids": {},
+// 			基地一ID: {
+// 				"zones": [占领区点ID],
+// 				"score": 总积分
+// 			},
+// 			基地二ID: {
+// 				"zones": [占领区点ID],
+// 				"score": 总积分
+// 			},
+// 		}
+// 	}
+// }
+var war_fix_data = new Array();
+// 结构：
+// {
+// 	轮次号（1～26）: {
+// 		调整地块ID: 基地ID,
+// 	}
+// }
 
 var initialize=function() {
 	build_template_table();
@@ -90,7 +114,7 @@ var raw_data_add_grid=function(round,base,grid,forced) {
 
 var button_action=function() {
 	//return function() {
-		var canedit=$("input#editor").attr('picked')=='on'; if (!canedit) { return; }
+		var canedit=$("input#mapeditor").attr('picked')=='on'; if (!canedit) { return; }
 		["#lake","#hill","#bank"].map(function(b) { $(b).attr("picked", "off"); $(b).css("background-color","#fff"); });
 		var button=$(this);
 		var selected = button.attr("picked")=="on";
@@ -184,7 +208,7 @@ var findSelectedSites=function() {
 	});
 	return r;
 }
-var td_action=function() {
+var html_map_td_action=function() {
 	if ($(this).attr('type')=='lake' || $(this).attr('type')=='hill' || $(this).attr('type')=='bank') { return; }
 	var lake_selected=($("#lake").attr("picked")=="on");
 	var hill_selected=($("#hill").attr("picked")=="on");
@@ -210,7 +234,7 @@ var td_action=function() {
 	
 }
 
-// "编辑"按钮
+// "编辑地形"按钮
 var btn_editmap_action=function() {
 	td_selection($(this));
 	var selected=$(this).attr('picked')=='on';
@@ -232,6 +256,48 @@ var btn_editmap_action=function() {
 			var item = $(this); item.children('input').prop('disabled',"disabled");
 			var v=item.children('input').val(); v=(v == 'NaN' ? 0 : v); item.attr('score',v);
 		});
+	}
+}
+
+var fix_data_add_grid=function(round,id,owner) {
+	if (!owner) { return };
+	let v = war_fix_data[round]; var zones = (v ? v : new Array())
+	zones[id] = base; //war_fix_data[round] = zones;
+}
+
+var html_war_td_action=function() {
+	var selected=$("input#wareditor").attr('picked')=='on';
+	if (!selected) { return; }
+	
+	var select = '<select id="set_base"><option>第1天第2轮</option>';
+	bases.forEach(function(i) {
+		select += '<option value="'+i+'">第1天第1轮</option>';
+	});
+	select += "</select>";
+	let owner = $(this).attr("owner");
+	$(this).append();
+	
+}
+
+var html_war_select_option=function() {
+
+	let id = $(this).attr("id"); let round = $(this).parents("table#map").attr("round");
+	let color = colors[owner];
+
+	fix_data_add_grid(round, id, owner);
+}
+
+// "编辑"按钮
+var btn_editwar_action=function() {
+	td_selection($(this));
+	var selected=$(this).attr('picked')=='on';
+	$(this).val(selected?'调整完毕':'调整地块');
+	
+	if (selected) {
+		war_fix_data = new Array();
+		$("#colorpicker").show();
+	} else {
+		$("#colorpicker").hide();
 	}
 }
 
@@ -358,12 +424,16 @@ var html_build_level_zones_tip=function(stats) {
 
 // 生成结算地图
 var btn_buildmap_action=function() {
+	var html = '<div class="seedleft">';
+		html += '<table id="mapmenu" class="menu">';
+		html += '<tr class="headline"><td><input id="wareditor" type="button" value="调整地块"/></td><td><div id="colorpicker" style="width:160px; height:30px; border:1px solid #ddd; display: none;">red</div></td></tr>';
+		html += '</table></div>';
 	var total_round=$('#round').val(); 
 	for (var round = 1; round <= total_round; round++) {
 		var prev_round = round - 1;
 		raw_data_start_calc(round);
-		var html = '<div class="seedleft">';
-		html += '<table id="map" class="war">';
+		html += '<div class="seedleft">';
+		html += '<table id="map" round="'+round+'" class="war">';
 		html += make_table_HT(); var span_tds = [];
 		// console.log(raw_data.rounds);
 		for (var i = 0; i < rows.length; i++) {
@@ -384,9 +454,9 @@ var btn_buildmap_action=function() {
 				var owner = template_owner_of_grid(round,id); var index = bases.indexOf(owner);
 				if (index >= 0) {
 					var color = colors[index];
-					html += '<td id="' + id + '" style="background-color: ' + color + '"' + span + '>' + score + '</td>';
+					html += '<td id="' + id + '" class="site" style="background-color: ' + color + '" owner=' + owner + span + '>' + score + '</td>';
 				} else {
-					html += '<td id="' + id + '"' + span + '>' + score + '</td>';
+					html += '<td id="' + id + '" class="site"' + span + '>' + score + '</td>';
 				}
 			}
 			html += '<th class="headline">' + r + '</th></tr>';
@@ -419,8 +489,11 @@ var btn_buildmap_action=function() {
 		let tip = html_build_level_zones_tip(zones_stats);
 		html += '<tr><td>合计</td><td><div title="'+tip+'">'+zones_total+'</div></td><td>'+round_total+'</td><td>'+sum_total+'</td></tr>';
 		html += '</table></div>';
-		$('#stub').before(html);
 	}
+	$('#stub').before(html);
+	$("#map td.site").click(html_war_td_action);
+	$("input#wareditor").click(btn_editwar_action);
+	$('#colorpicker').bindUEColorCombox('u');
 }
 
 // 生成模版地图
@@ -447,7 +520,7 @@ var build_template_table=function() {
 	};
 	html += make_table_HT();
 	$('#template').html(html);
-	$("#template td.site").click(td_action);
+	$("#template td.site").click(html_map_td_action);
 }
 
 // 导入地图
@@ -588,7 +661,7 @@ $(document).ready(function(){
   $("#lake").click(button_action);
   $("#hill").click(button_action);
   $("#bank").click(button_action);
-  $("input#editor").click(btn_editmap_action);
+  $("input#mapeditor").click(btn_editmap_action);
   $("input#build").click(btn_buildmap_action);
   $("input#export").click(download_json);
   $("input#test").click(test);
