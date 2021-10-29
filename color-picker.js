@@ -15,6 +15,8 @@ if (typeof jQuery === 'undefined') { throw 'no jquery'; }
     'use strict';
     window.UEColorCombox || (window.UEColorCombox = {
         config: {
+            onShow: function() {},
+            onHide: function() {},
             isShowTargetColor:false,
             title:['N/A','T06','F01','A15','O20'],
             color:['white','red','green','blue','yellow'],
@@ -38,6 +40,7 @@ if (typeof jQuery === 'undefined') { throw 'no jquery'; }
                 }
             }
             cb.colorComboxDom.show();
+            cb.config.onShow();
             cb.setComboxPosition();
             $('.ue_colorcombox_item').off('click').on('click', function () {
                 var v = $(this).find('.ue_colorcombox_text').html()
@@ -46,6 +49,7 @@ if (typeof jQuery === 'undefined') { throw 'no jquery'; }
                 }
                 cb.target.html(v).val(v);
                 cb.colorComboxDom.hide();
+                cb.config.onHide();
             });
             $('.ue_colorcombox_text').off('mouseenter').on('mouseenter', function () {
                 $(this).parent().css('background-color', '#ccc');
@@ -90,7 +94,9 @@ if (typeof jQuery === 'undefined') { throw 'no jquery'; }
                 this.colorComboxDom.css({ left: rc.left });
             }
         },
-        bind: function (tg, f) {
+        bind: function (tg, onShow, onHide) {
+            this.config.onShow = onShow;
+            this.config.onHide = onHide;
             if ($('#ue_colorcombox_style').length < 1) {
 		        $(this.config.style).appendTo('head');
 			}
@@ -114,10 +120,14 @@ if (typeof jQuery === 'undefined') { throw 'no jquery'; }
 		    c.height = c.height || t.height();
 		    this.showCombox();
 		},
+        hide: function (tg) {
+            var cb = this;
+            cb.colorComboxDom.hide();
+        },
 	});
  
-    $.fn.bindUEColorCombox = function (f) {
-        UEColorCombox.bind($(this), f);
+    $.fn.bindUEColorCombox = function (onShow,onHide) {
+        UEColorCombox.bind($(this), onShow, onHide);
 	};
  
 }());

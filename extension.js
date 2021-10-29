@@ -10,7 +10,7 @@ var raw_data = {"rounds":{0:{"grids":{}}}}
 // {
 // 	"rounds": {
 // 		轮次号（1～26）: {
-// 			"grids": {},
+// 			"grids": {地块ID: 地块所属基地ID, ...},
 // 			基地一ID: {
 // 				"zones": [占领区点ID],
 // 				"score": 总积分
@@ -57,6 +57,11 @@ var raw_data_is_near=function(data,base,grid) {
 		if ((type == null || type == 'node') && data.grids[item] == base) { return true; }
 	}
 	return false;
+}
+
+var raw_data_all_zones=function(round,base) {
+	let cur = raw_data.rounds[round]; let zones=cur[base].zones;
+	return zones;
 }
 
 var raw_data_total_zones=function(round,base) {
@@ -265,29 +270,55 @@ var fix_data_add_grid=function(round,id,owner) {
 	zones[id] = base; //war_fix_data[round] = zones;
 }
 
+// 战果地图 地块点击事件
+var html_war_td_change_base=function(id,base) {
+	let index = bases.indexOf(base);
+	if (index >= 0) {
+		let color = colors[index];
+		$('#map td#'+id).css("background-color",color);
+		// TODO: add fix data
+	} else {
+		$('#map td#'+id).css("background-color",'white');
+		// TODO: remove fix data
+	}
+}
+
+// 战果地图 地块点击事件
 var html_war_td_action=function() {
 	var selected=$("input#wareditor").attr('picked')=='on';
 	if (!selected) { return; }
 	
-	var select = '<select id="set_base"><option>第1天第2轮</option>';
-	bases.forEach(function(i) {
-		select += '<option value="'+i+'">第1天第1轮</option>';
-	});
-	select += "</select>";
-	let owner = $(this).attr("owner");
-	$(this).append();
+	let id = $(this).attr("id"); let round = $(this).parents("table#map").attr("round");
+	$("#colorpicker").show(); $("#colorpicker").attr('grid', id);
+	let owner = raw_data_owner_of_grid(round, id);
+	if (owner) {
+		$("#colorpicker").text(owner);
+	} else {
+		$("#colorpicker").text('N/A');
+	}
+}
+
+// 战果地图 颜色框显示的回调
+var html_war_on_color_picker_show=function() {
 	
 }
 
-var html_war_select_option=function() {
-
-	let id = $(this).attr("id"); let round = $(this).parents("table#map").attr("round");
-	let color = colors[owner];
-
-	fix_data_add_grid(round, id, owner);
+// 战果地图 颜色框消失的回调
+var html_war_on_color_picker_hide=function() {
+	let id = $("#colorpicker").attr('grid'); let base = $("#colorpicker").text();
+	// console.log(id);
+	html_war_td_change_base(id,base);
 }
 
-// "编辑"按钮
+// var html_war_select_option=function() {
+
+// 	let id = $(this).attr("id"); let round = $(this).parents("table#map").attr("round");
+// 	let color = colors[owner];
+
+// 	fix_data_add_grid(round, id, owner);
+// }
+
+// "调整地块"按钮
 var btn_editwar_action=function() {
 	td_selection($(this));
 	var selected=$(this).attr('picked')=='on';
@@ -295,9 +326,9 @@ var btn_editwar_action=function() {
 	
 	if (selected) {
 		war_fix_data = new Array();
-		$("#colorpicker").show();
+		//$("#colorpicker").show();
 	} else {
-		$("#colorpicker").hide();
+		//$("#colorpicker").hide();
 	}
 }
 
@@ -406,7 +437,7 @@ var template_td_colspan=function(id) {
 	return r;
 }
 
-var template_owner_of_grid=function(round,id) {
+var raw_data_owner_of_grid=function(round,id) {
 	if (raw_data.rounds[round] == null || raw_data.rounds[round].grids == null) { return null; }
 	var r = raw_data.rounds[round].grids[id];
 	if (r == null) { return null; }
@@ -451,7 +482,7 @@ var btn_buildmap_action=function() {
 				if (span_tds.indexOf(id) >= 0) { continue; }
 				raw_data_calc_td(i, j, round);
 				// console.log(raw_data.rounds[round]);
-				var owner = template_owner_of_grid(round,id); var index = bases.indexOf(owner);
+				var owner = raw_data_owner_of_grid(round,id); var index = bases.indexOf(owner);
 				if (index >= 0) {
 					var color = colors[index];
 					html += '<td id="' + id + '" class="site" style="background-color: ' + color + '" owner=' + owner + span + '>' + score + '</td>';
@@ -493,7 +524,7 @@ var btn_buildmap_action=function() {
 	$('#stub').before(html);
 	$("#map td.site").click(html_war_td_action);
 	$("input#wareditor").click(btn_editwar_action);
-	$('#colorpicker').bindUEColorCombox('u');
+	$('#colorpicker').bindUEColorCombox(html_war_on_color_picker_show,html_war_on_color_picker_hide);
 }
 
 // 生成模版地图
