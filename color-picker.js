@@ -16,7 +16,8 @@ if (typeof jQuery === 'undefined') { throw 'no jquery'; }
     window.UEColorCombox || (window.UEColorCombox = {
         config: {
             isShowTargetColor:false,
-            data:['red','green','blue','yellow','black','white'],
+            title:['N/A','T06','F01','A15','O20'],
+            color:['white','red','green','blue','yellow'],
             style: ''
 + '<style id="ue_colorcombox_style">'
 + '   .ue_colorcombox_frame {border:1px solid #999;border-radius:3px;width:120px;height:auto;overflow:hidden;position:absolute;font-size:12px;user-select:none;margin: 0;padding: 3px;background-color:#fff;display:grid;z-index:2;}'
@@ -27,13 +28,13 @@ if (typeof jQuery === 'undefined') { throw 'no jquery'; }
 + '</style>',
         },
         showCombox: function () {
-            var cb = this, list = cb.config.data;
+            var cb = this, list = cb.config.color, title = cb.config.title;
             cb.colorComboxDom = cb.colorComboxDom || $('<div class="ue_colorcombox_frame"></div>').appendTo($('body'));
             if (cb.colorComboxDom.children().length < 1) {
                 cb.colorComboxDom.html('');
                 for (var i = 0; i < list.length; i++) {
                     var bgcolor = (i % 2) == 0 ? '#fff' : '#eee';
-                    cb.colorComboxDom.append('<div class="ue_colorcombox_item" bgc="' + bgcolor + '" style="background:' + bgcolor + ';"><div class="ue_colorcombox_color" style="background:' + list[i] + ';"></div><div class="ue_colorcombox_text">' + list[i] + '</div></div>');
+                    cb.colorComboxDom.append('<div class="ue_colorcombox_item" bgc="' + bgcolor + '" style="background:' + bgcolor + ';"><div class="ue_colorcombox_color" style="background:' + list[i] + ';"></div><div class="ue_colorcombox_text">' + title[i] + '</div></div>');
                 }
             }
             cb.colorComboxDom.show();

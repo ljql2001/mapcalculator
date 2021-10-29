@@ -426,7 +426,7 @@ var html_build_level_zones_tip=function(stats) {
 var btn_buildmap_action=function() {
 	var html = '<div class="seedleft">';
 		html += '<table id="mapmenu" class="menu">';
-		html += '<tr class="headline"><td><input id="wareditor" type="button" value="调整地块"/></td><td><div id="colorpicker" style="width:160px; height:30px; border:1px solid #ddd; display: none;">red</div></td></tr>';
+		html += '<tr class="headline"><td><input id="wareditor" type="button" value="调整地块"/></td><td><div id="colorpicker" style="width:160px; height:30px; border:1px solid #ddd; display: none;">N/A</div></td></tr>';
 		html += '</table></div>';
 	var total_round=$('#round').val(); 
 	for (var round = 1; round <= total_round; round++) {
