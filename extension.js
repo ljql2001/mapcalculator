@@ -351,8 +351,8 @@ var btn_buildmap_action=function() {
 			html += '<tr><td style="background-color: ' + c + '">' + i + '</td><td>' + score + '</td><td>' + cur_score + '</td></tr>';
 		}
 		html += '</table></div>';
-		$('#stub').before(html);
 	}
+	$('#stub').before(html);
 }
 
 // 生成模版地图
