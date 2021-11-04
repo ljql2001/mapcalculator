@@ -296,11 +296,12 @@ var owner_of_grid=function(round,id) {
 
 // 生成结算地图
 var btn_buildmap_action=function() {
-	var total_round=$('#round').val(); 
+	var total_round=$('#round').val(); var html = '';
+	console.log(total_round);
 	for (var round = 1; round <= total_round; round++) {
 		var prev_round = round - 1;
 		raw_data_start_calc(round);
-		var html = '<div class="seedleft">';
+		html += '<div class="seedleft">';
 		html += '<table id="map" class="war">';
 		html += make_table_HT(); var span_tds = [];
 		// console.log(raw_data.rounds);
