@@ -33,7 +33,8 @@
  .plist td{
  padding: 0;
  }
-tr.headline,th.headline{
+ tr.headline,th.headline{
+ color: #fff;
  background-color: #379;
  }
  .plist td input{
