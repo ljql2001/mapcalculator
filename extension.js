@@ -481,6 +481,22 @@ var btn_exportmap_action=function() {
     downloadFile(json);
 }
 
+var on_change_maptype=function() {
+	let value = parseInt($(this).val()); 
+	switch (value) {
+		case 1:
+			levels = levels_rank1;
+			initialize();
+			break;
+		case 2:
+			levels = levels_rank2;
+			initialize();
+			break;
+		default:
+			alert('功能正在开发中，敬请期待...');
+	}
+}
+
 var test=function() {
 	//raw_data_add_grid(1,'T15','T01');
 	// var r=raw_data_is_near(raw_data.rounds[0].grids,'T15', 'T13');
@@ -495,5 +511,6 @@ $(document).ready(function(){
   $("input#build").click(btn_buildmap_action);
   $("input#export").click(btn_exportmap_action);
   $("input#test").click(test);
+  $("#maptype").change(on_change_maptype);
   initialize();
 });
