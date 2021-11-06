@@ -90,7 +90,7 @@ var raw_data_add_grid=function(round,base,grid,forced) {
 var button_action=function() {
 	//return function() {
 		var canedit=$("input#mapeditor").attr('picked')=='on'; if (!canedit) { return; }
-		["#lake","#hill","#bank"].map(function(b) { $(b).attr("picked", "off"); $(b).css("background-color","#fff"); });
+		["#lake","#hill","#bank"].map(function(b) { $(b).attr("picked", "off"); $(b).removeAttr("style"); });
 		var button=$(this);
 		var selected = button.attr("picked")=="on";
 		//console.log(selected + "," + button.attr("picked"));
@@ -101,11 +101,11 @@ var button_action=function() {
 		if (selected) {
 			button.css("background-color","red");
 		} else {
-			button.css("background-color","#fff");
+			button.removeAttr("style");
 		}
 		$('td.site').each(function(i) {
 			$(this).attr("picked", "off");
-			$(this).css("background-color","#fff");
+			$(this).removeAttr("style");
 		});
 	//};
 }
@@ -115,7 +115,7 @@ var td_selection=function(td) {
 	var selected = td.attr("picked")=="on";
 	if (selected) {
 		td.attr("picked", "off");
-		td.css("background-color","#fff");
+		td.removeAttr("style");
 	} else {
 		td.attr("picked", "on");
 		td.css("background-color","red");
@@ -223,7 +223,7 @@ var btn_editmap_action=function() {
 			var v=item.attr('score'); item.children('input').val(v);
 		});
 	} else {
-		["#lake","#hill","#bank"].map(function(b) { $(b).attr("picked", "off"); $(b).css("background-color","#fff"); });
+		["#lake","#hill","#bank"].map(function(b) { $(b).attr("picked", "off"); $(b).removeAttr("style"); });
 		$("input#build").removeAttr('disabled');
 		$('td.site').each(function(i) {
 			//console.log($(this).attr("picked"));
@@ -248,7 +248,7 @@ var html_war_td_change_base=function(id,base) {
 		$('#map td#'+id).css("background-color",color);
 		// TODO: add fix data
 	} else {
-		$('#map td#'+id).css("background-color",'white');
+		$('#map td#'+id).removeAttr("style");
 		// TODO: remove fix data
 	}
 }
