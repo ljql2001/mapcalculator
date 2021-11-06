@@ -64,4 +64,6 @@ float: left;
 div.seedright {
 float: right;
 }
-
+div#colorpicker {
+ color: black;
+}
