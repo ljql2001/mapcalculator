@@ -12,8 +12,9 @@ var raw_data_init=function() {
 	});
 }
 
+// 检查格子是否有“飞地”存在
 var raw_data_is_near=function(data,base,grid) {
-	var type = template_td_type(grid); if (type != null && type != 'node') { return false; }
+	var type = template_td_type(grid); if (type && type != 'node') { return false; }
 	var r=grid.charAt(0), c=grid.substring(1);
 	var ri=rows.indexOf(r), ci=cols.indexOf(c);
 	if (ri < 0 || ci < 0) { return false; }
@@ -24,7 +25,7 @@ var raw_data_is_near=function(data,base,grid) {
 	if (ci+1 < cols.length) { nearest.push(r+cols[ci+1]); }
 	for (var item of nearest) {
 		// console.log("base:"+base+',item:'+item+',nearest:'+nearest);
-		if ((type == null || type == 'node') && data.grids[item] == base) { return true; }
+		if ((!type || type == 'node') && data.grids[item] == base) { return true; }
 	}
 	return false;
 }
@@ -61,29 +62,32 @@ var raw_data_calc_score=function(round,base) {
 	return sum;
 }
 
-var raw_data_add_grid=function(round,base,grid,forced) {
+var raw_data_add_grid=function(round,base,id,forced) {
 	var prev_round = round-1; var prev = raw_data.rounds[prev_round];
 	// console.log(prev);
-	if (raw_data_is_near(prev,base,grid)) {
-		var current=raw_data.rounds[round].grids[grid];
-		if (forced || current == null) {
-			if (current != null) {
+	if (raw_data_is_near(prev,base,id)) {
+		var owner=raw_data.rounds[round].grids[id];
+		if (forced || owner == null) {
+			if (owner != null) {
 				console.log('REMOVED!!');
-				// modify the current owner and score
-				var index = raw_data.rounds[round][current].zones.indexOf(grid);
+				// modify the owner and score
+				var index = raw_data.rounds[round][owner].zones.indexOf(id);
 				if (index >= 0) { 
-					raw_data.rounds[round][current].zones.splice(index,1); 
-					raw_data.rounds[round][current].score=raw_data_calc_score(round,current);
+					raw_data.rounds[round][owner].zones.splice(index,1);
+					//raw_data.rounds[round][owner].score=raw_data_calc_score(round,owner);
 				}
 			}
-			raw_data.rounds[round].grids[grid]=base;
-			if (raw_data.rounds[round][base].zones.indexOf(grid) < 0) { raw_data.rounds[round][base].zones.push(grid); }
+			raw_data.rounds[round].grids[id]=base;
+			if (raw_data.rounds[round][base].zones.indexOf(id) < 0) { raw_data.rounds[round][base].zones.push(id); }
 			// var sum = raw_data_calc_score(round,base);
 			// raw_data.rounds[round][base].score=sum;
 			// //console.log(raw_data.rounds[round]);
 		} else {
-			// console.log(grid+' already has an current '+current+'!');
+			// console.log(id+' already has an owner '+owner+'!');
 		}
+	} else {
+		if (id == base) { return; }
+		console.log(round+':'+id+' is placed with wrong owner('+base+')!');
 	}
 }
 
@@ -252,8 +256,7 @@ var fix_data_add_grid=function(round,id,base) {
 var html_war_td_change_base=function(round,id,base) {
 	if (!round || isNaN(parseInt(round))) { return; }
 
-	fix_data_add_grid(round,id,base)
-	console.log(war_fix_data);
+	fix_data_add_grid(round,id,base);
 }
 
 // 战果地图 地块点击事件
@@ -278,18 +281,52 @@ var html_war_on_color_picker_show=function() {
 
 // 战果地图 颜色框消失的回调
 var html_war_on_color_picker_hide=function() {
+	var selected=$("input#wareditor").attr('picked')=='on';
+	if (!selected) { return; }
+
 	let round = $("#colorpicker").attr('round'); let id = $("#colorpicker").attr('grid'); let base = $("#colorpicker").text();
 	// console.log(id);
 	html_war_td_change_base(round,id,base);
 }
 
-// var html_war_select_option=function() {
+// 
+var raw_data_add_war_fix_grid=function(round,base,id,forced) {
+	var current_round = round; var current = raw_data.rounds[current_round];
+	// console.log(current);
+	if (raw_data_is_near(current,base,id)) {
+		var owner=raw_data.rounds[round].grids[id];
+		if (owner != null) {
+			console.log('REMOVED!!');
+			// modify the owner and score
+			var index = raw_data.rounds[round][owner].zones.indexOf(id);
+			if (index >= 0) { 
+				raw_data.rounds[round][owner].zones.splice(index,1);
+			}
+		}
+		raw_data.rounds[round].grids[id]=base;
+		if (raw_data.rounds[round][base].zones.indexOf(id) < 0) { 
+			raw_data.rounds[round][base].zones.push(id); 
+		}
+	} else {
+		if (id == base) { return; }
+		console.log(round+':'+id+' is placed with wrong owner('+base+')!');
+	}
+}
 
-// 	let id = $(this).attr("id"); let round = $(this).parents("table#map").attr("round");
-// 	let color = colors[owner];
-
-// 	fix_data_add_grid(round, id, owner);
-// }
+// 战果地图 分数重新计算
+var html_war_calc_result=function() {
+	for (var k in war_fix_data) {
+		let round = k; let v = war_fix_data[k];
+		for (var id in v) {
+			let owner = v[id];
+			raw_data_add_war_fix_grid(round,owner,id,false);
+		}
+	}
+	console.log(war_fix_data); console.log(raw_data);
+	// $("div#mapleft").remove();
+	// $("div#mapright").remove();
+	// btn_buildmap_action();
+}
 
 // "调整地块"按钮
 var btn_editwar_action=function() {
@@ -299,9 +336,10 @@ var btn_editwar_action=function() {
 	
 	if (selected) {
 		war_fix_data = new Array();
-		//$("#colorpicker").show();
 	} else {
-		//$("#colorpicker").hide();
+		console.log(war_fix_data);
+		UEColorCombox.hide(null);
+		html_war_calc_result();
 	}
 }
 
@@ -370,18 +408,6 @@ var raw_data_round_lowest_score=function(round) {
 	return index;
 }
 
-// // 计算累计总积分
-// var calculate_daily_sum=function(day) {
-// 	var r = [0,0,0,0];
-// 	for (var i=1; i<=day; i++) {
-// 		var daily = daily_summary[i]; if (daily == null) { continue; }
-// 		for (var j=0; j<daily.length; j++) {
-// 			r[j] += daily[j];
-// 		}
-// 	}
-// 	return r;
-// }
-
 var js_combine_array=function(main,part) {
 	part.forEach(function(num,score) {
 		let v = parseInt(main[score]); let count = (isNaN(v) ? 0 : v);
@@ -428,7 +454,7 @@ var html_build_level_zones_tip=function(stats) {
 
 // 生成结算地图
 var btn_buildmap_action=function() {
-	var html = '<div class="seedleft">';
+	var html = '<div id="mapleft" class="seedleft">';
 		html += '<table id="mapmenu" class="menu">';
 		html += '<tr class="headline"><td><input id="wareditor" type="button" value="调整地块"/></td><td><div id="colorpicker" style="width:160px; height:30px; border:1px solid #ddd; display: none;">N/A</div></td></tr>';
 		html += '</table></div>';
@@ -436,7 +462,7 @@ var btn_buildmap_action=function() {
 	for (var round = 1; round <= total_round; round++) {
 		var prev_round = round - 1;
 		raw_data_start_calc(round);
-		html += '<div class="seedleft">';
+		html += '<div id="mapleft" class="seedleft">';
 		html += '<table id="map" round="'+round+'" class="war">';
 		html += make_table_HT(); var span_tds = [];
 		// console.log(raw_data.rounds);
@@ -474,7 +500,7 @@ var btn_buildmap_action=function() {
 
 		// generate the statistics table per round
 		let options=$("#round option"); let round_text=options[round-1].text; //console.log(round_text);
-		html += '<div class="seedright"><table id="daily" class="war">';
+		html += '<div id="mapright" class="seedright"><table id="daily" class="war">';
 		html += '<tr width="100%"><td colspan=4>'+round_text+'</td></tr>';
 		html += '<tr><td>颜色</td><td>地块数量</td><td>本轮积分</td><td>总积分</td></tr>';
 		var round_total = 0; var sum_total = 0; var zones_total = 0; var zones_stats = new Array();
