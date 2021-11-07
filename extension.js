@@ -234,23 +234,26 @@ var btn_editmap_action=function() {
 	}
 }
 
-var fix_data_add_grid=function(round,id,owner) {
-	if (!owner) { return };
+var fix_data_add_grid=function(round,id,base) {
+	if (!round || !id) { return };
+
+	let index = bases.indexOf(base); let owner = (index >= 0 ? base : null)
 	let v = war_fix_data[round]; var zones = (v ? v : new Array())
-	zones[id] = base; //war_fix_data[round] = zones;
+	zones[id] = owner; war_fix_data[round] = zones;
+	if (owner) {
+		let color = colors[index];
+		$('#map[round$="'+round+'"] td#'+id).css("background-color",color);
+	} else {
+		$('#map[round$="'+round+'"] td#'+id).removeAttr("style");
+	}
 }
 
 // 战果地图 地块点击事件
-var html_war_td_change_base=function(id,base) {
-	let index = bases.indexOf(base);
-	if (index >= 0) {
-		let color = colors[index];
-		$('#map td#'+id).css("background-color",color);
-		// TODO: add fix data
-	} else {
-		$('#map td#'+id).removeAttr("style");
-		// TODO: remove fix data
-	}
+var html_war_td_change_base=function(round,id,base) {
+	if (!round || isNaN(parseInt(round))) { return; }
+
+	fix_data_add_grid(round,id,base)
+	console.log(war_fix_data);
 }
 
 // 战果地图 地块点击事件
@@ -259,7 +262,7 @@ var html_war_td_action=function() {
 	if (!selected) { return; }
 	
 	let id = $(this).attr("id"); let round = $(this).parents("table#map").attr("round");
-	$("#colorpicker").show(); $("#colorpicker").attr('grid', id);
+	$("#colorpicker").show(); $("#colorpicker").attr('grid', id); $("#colorpicker").attr('round', round);
 	let owner = raw_data_owner_of_grid(round, id);
 	if (owner) {
 		$("#colorpicker").text(owner);
@@ -275,9 +278,9 @@ var html_war_on_color_picker_show=function() {
 
 // 战果地图 颜色框消失的回调
 var html_war_on_color_picker_hide=function() {
-	let id = $("#colorpicker").attr('grid'); let base = $("#colorpicker").text();
+	let round = $("#colorpicker").attr('round'); let id = $("#colorpicker").attr('grid'); let base = $("#colorpicker").text();
 	// console.log(id);
-	html_war_td_change_base(id,base);
+	html_war_td_change_base(round,id,base);
 }
 
 // var html_war_select_option=function() {
