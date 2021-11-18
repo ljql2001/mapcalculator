@@ -454,10 +454,10 @@ var html_build_level_zones_tip=function(stats) {
 
 // 生成结算地图
 var btn_buildmap_action=function() {
-	var html = '<div id="mapleft" class="seedleft">';
+	var html = '<!--div id="mapleft" class="seedleft">';
 		html += '<table id="mapmenu" class="menu">';
 		html += '<tr class="headline"><td><input id="wareditor" type="button" value="调整地块"/></td><td><div id="colorpicker" style="width:160px; height:30px; border:1px solid #ddd; display: none;">N/A</div></td></tr>';
-		html += '</table></div>';
+		html += '</table></div-->';
 	var total_round=$('#round').val(); 
 	for (var round = 1; round <= total_round; round++) {
 		var prev_round = round - 1;
