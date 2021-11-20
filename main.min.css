@@ -15,7 +15,7 @@
  	border: 1px solid #aaa;
  	border-collapse: collapse;
  }
- .plist caption{
+ .plist caption, .menu caption {
  font: 700 20px/28px "Î¢ÈíÑÅºÚ";
  padding: 10px;
  }
@@ -45,6 +45,10 @@
  font-size: 8px;
  border: 0px solid #fff;
  }
+ .menu {
+ 	width: 720px;
+ }
+
  .menu th, .menu td{
  width: 60px;
  line-height: 24px;
@@ -52,6 +56,20 @@
  font-family: "Î¢ÈíÑÅºÚ";
  text-align: center;
  padding: 4px;
+}
+ .menu th.middle, .menu td.middle{
+ width: 120px;
+ }
+.menu tr.title,.menu td.title{
+ font: 500 16px/16px "Î¢ÈíÑÅºÚ";
+ text-align: left;
+}
+.menu tr.text,.menu td.text{
+ font-size: 12px;
+ text-align: left;
+}
+.menu input[type="text"] {
+ width: 40px;
 }
 div {
  display: inline;

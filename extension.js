@@ -5,6 +5,13 @@ var initialize=function() {
 	raw_data_init();
 }
 
+var setupMenuComponents=function() {
+	let inputs = ['#societies1', '#societies2', '#societies3', '#societies4'];
+	inputs.forEach(function(id,index) {
+		let s = societies[index]; $(id).val(s);
+	});
+}
+
 var raw_data_init=function() {
 	bases.forEach(function(i) {
 		raw_data.rounds[0].grids[i]=i;
@@ -212,6 +219,26 @@ var html_map_td_action=function() {
 	}
 	
 }
+
+// "修改基地名称"按钮
+var btn_baseeditor_action=function() {
+	td_selection($(this));
+	var selected=$(this).attr('picked')=='on';
+	$(this).val(selected?'保存':'修改基地名称');
+	
+	let inputs = ['#societies1', '#societies2', '#societies3', '#societies4'];
+	if (selected) {
+		inputs.forEach(function(id,index) { $(id).removeAttr('disabled'); });
+	} else {
+		societies = new Array();
+		inputs.forEach(function(id,index) { 
+			$(id).prop('disabled',"disabled"); 
+			var val = $(id).val();
+			societies.push(val); 
+		});
+	}
+}
+
 
 // "编辑地形"按钮
 var btn_editmap_action=function() {
@@ -501,11 +528,11 @@ var btn_buildmap_action=function() {
 		// generate the statistics table per round
 		let options=$("#round option"); let round_text=options[round-1].text; //console.log(round_text);
 		html += '<div id="mapright" class="seedright"><table id="daily" class="war">';
-		html += '<tr width="100%"><td colspan=4>'+round_text+'</td></tr>';
-		html += '<tr><td>颜色</td><td>地块数量</td><td>本轮积分</td><td>总积分</td></tr>';
+		html += '<tr width="100%"><td colspan=5>'+round_text+'</td></tr>';
+		html += '<tr><td>公会</td><td>地块数量</td><td>本轮积分</td><td>总积分</td></tr>';
 		var round_total = 0; var sum_total = 0; var zones_total = 0; var zones_stats = new Array();
 		for (var i = 0; i < bases.length; i++) {
-			let base = bases[i]; let c = colors[i];
+			let base = bases[i]; let c = colors[i]; let s = societies[i];
 			let zones = raw_data_total_zones(round,base); zones_total += zones;
 			let stats = raw_data_level_zones(round,base); let tip = html_build_level_zones_tip(stats);
 			js_combine_array(zones_stats,stats);
@@ -514,7 +541,7 @@ var btn_buildmap_action=function() {
 			let bonus = (i == lucky ? '+'+levels['bank'] : ''); cur_score += (i == lucky ? levels['bank'] : 0);
 			if (i == lucky) { raw_data.rounds[round][base].score = cur_score; } // add bank score for lucky base
 			round_total += (cur_score - last_score); sum_total += cur_score;
-			html += '<tr><td style="background-color: ' + c + '">' + i + '</td><td><div title="'+tip+'">'+zones+'</div></td><td>' + score + bonus + '</td><td>' + cur_score + '</td></tr>';
+			html += '<tr><td style="background-color: ' + c + '"><font color="white">' + s + '</font></td><td><div title="'+tip+'">'+zones+'</div></td><td>' + score + bonus + '</td><td>' + cur_score + '</td></tr>';
 		}
 		let tip = html_build_level_zones_tip(zones_stats);
 		html += '<tr><td>合计</td><td><div title="'+tip+'">'+zones_total+'</div></td><td>'+round_total+'</td><td>'+sum_total+'</td></tr>';
@@ -654,7 +681,23 @@ var btn_exportmap_action=function(ext) {
     }
 
 	if (ext == 'json') {
-		var json = '[', comma = '';
+		var json = '{"version":20211120,';
+		json += '"bases":[', comma = '';
+		bases.forEach(function(i) {
+			json += comma + i;
+			comma = ',';
+		});
+		json += '], "colors":['; comma = '';
+		colors.forEach(function(i) {
+			json += comma + i;
+			comma = ',';
+		});
+		json += '], "societies":['; comma = '';
+		societies.forEach(function(i) {
+			json += comma + i;
+			comma = ',';
+		});
+		json += '],"template":['; comma = '';
 		$('#template td.site').each(function(i) {
 			var item = $(this); 
 			var id = item.attr("id"); var v = item.attr("score"); var type = item.attr("type");
@@ -664,7 +707,7 @@ var btn_exportmap_action=function(ext) {
 			json += comma + '{"id":"' + id + '","score":' + v + ',"type":"' + type + '"}';
 			comma = ',';
 		});
-		json += ']';
+		json += ']}';
 		text = json;
 		downloadJson(json);
 	} else {
@@ -696,6 +739,20 @@ var on_change_maptype=function() {
 	}
 }
 
+var on_change_baseslocation=function() {
+	let value = $(this).val();
+	switch (value) {
+		case 'left':
+			bases = bases1;
+			initialize();
+			break;
+		case 'right':
+			bases = bases2;
+			initialize();
+			break;
+	}
+}
+
 var download_json=function() { btn_exportmap_action('json'); }
 var download_csv=function() { btn_exportmap_action('csv'); }
 
@@ -707,10 +764,13 @@ $(document).ready(function(){
   $("#lake").click(button_action);
   $("#hill").click(button_action);
   $("#bank").click(button_action);
+  $("input#baseeditor").click(btn_baseeditor_action);
   $("input#mapeditor").click(btn_editmap_action);
   $("input#build").click(btn_buildmap_action);
   $("input#export").click(download_json);
   $("input#test").click(test);
   $("#maptype").change(on_change_maptype);
+  $("#baseslocation").change(on_change_baseslocation);
   initialize();
+  setupMenuComponents();
 });
