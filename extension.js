@@ -584,9 +584,21 @@ var build_template_table=function() {
 var btn_importmap_action=function(text) {
 	build_template_table();
 
-	let json = JSON.parse(text); var list = new Array;
-	for (var i=0; i<json.length; i++) {
-		var item = json[i]; var id = item.id; var type = item.type; var grid = $('#template #'+id);
+
+	let json = JSON.parse(text); let version = json['version']; var list = new Array;
+	var template = new Array();
+	if (!version) {
+		// the oldest version
+		template = json;
+	} else {
+		// the data version is bigger than "20211120"
+		template = json['template'];
+		if (json['bases']) { bases = json['bases']; }
+		if (json['colors']) { colors = json['colors']; }
+		if (json['societies']) { societies = json['societies']; }
+	}
+	for (var i=0; i<template.length; i++) {
+		var item = template[i]; var id = item.id; var type = item.type; var grid = $('#template #'+id);
 		grid.attr('score', item.score); grid.attr('type', type); 
 		if (type == 'lake') {
 			grid.children("input").hide(); 
@@ -676,7 +688,7 @@ var btn_exportmap_action=function(ext) {
       saveAs(blob, "template.json");
     }
     var downloadCsv = function(content) { // download csv
-      var file = new File([content], "template.csv", { type: "text/plain;charset=utf-8" });
+      var file = new File([content], "template.xls", { type: "text/plain;charset=utf-8" });
       saveAs(file);
     }
 
@@ -768,7 +780,7 @@ $(document).ready(function(){
   $("input#mapeditor").click(btn_editmap_action);
   $("input#build").click(btn_buildmap_action);
   $("input#export").click(download_json);
-  $("input#test").click(test);
+  $("input#exportcsv").click(download_csv);
   $("#maptype").change(on_change_maptype);
   $("#baseslocation").change(on_change_baseslocation);
   initialize();
