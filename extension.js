@@ -13,6 +13,7 @@ var setupMenuComponents=function() {
 }
 
 var raw_data_init=function() {
+	raw_data = {"rounds":{0:{"grids":{}}}};
 	bases.forEach(function(i) {
 		raw_data.rounds[0].grids[i]=i;
 		raw_data.rounds[0][i]={"zones":[i],"score":1000};

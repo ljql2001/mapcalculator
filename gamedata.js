@@ -11,7 +11,7 @@ let all_bases = [bases1, bases2];
 var levels = levels_rank1;
 var bases = bases1;
 var societies = ['公会一', '公会二', '公会三', '公会四'];
-var raw_data = {"rounds":{0:{"grids":{}}}};
+var raw_data = new Array();
 // 结构：
 // {
 // 	"rounds": {
