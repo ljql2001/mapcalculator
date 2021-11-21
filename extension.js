@@ -582,21 +582,24 @@ var build_template_table=function() {
 
 // 导入地图
 var btn_importmap_action=function(text) {
-	build_template_table();
-
-
+	// read data from the json file
 	let json = JSON.parse(text); let version = json['version']; var list = new Array;
 	var template = new Array();
 	if (!version) {
-		// the oldest version
+		// the json file is the oldest version
 		template = json;
 	} else {
-		// the data version is bigger than "20211120"
+		// the json file version is bigger than 20211120
 		template = json['template'];
 		if (json['bases']) { bases = json['bases']; }
 		if (json['colors']) { colors = json['colors']; }
 		if (json['societies']) { societies = json['societies']; }
 	}
+
+	// build the template map and initialize the raw data
+	initialize();
+
+	// apply the json data
 	for (var i=0; i<template.length; i++) {
 		var item = template[i]; var id = item.id; var type = item.type; var grid = $('#template #'+id);
 		grid.attr('score', item.score); grid.attr('type', type); 
@@ -688,7 +691,7 @@ var btn_exportmap_action=function(ext) {
       saveAs(blob, "template.json");
     }
     var downloadCsv = function(content) { // download csv
-      var file = new File([content], "template.xls", { type: "text/plain;charset=utf-8" });
+      var file = new File([content], "map.xls", { type: "text/plain;charset=utf-8" });
       saveAs(file);
     }
 
@@ -696,17 +699,17 @@ var btn_exportmap_action=function(ext) {
 		var json = '{"version":20211120,';
 		json += '"bases":[', comma = '';
 		bases.forEach(function(i) {
-			json += comma + i;
+			json += `${comma}"${i}"`;
 			comma = ',';
 		});
 		json += '], "colors":['; comma = '';
 		colors.forEach(function(i) {
-			json += comma + i;
+			json += `${comma}"${i}"`;
 			comma = ',';
 		});
 		json += '], "societies":['; comma = '';
 		societies.forEach(function(i) {
-			json += comma + i;
+			json += `${comma}"${i}"`;
 			comma = ',';
 		});
 		json += '],"template":['; comma = '';
@@ -716,7 +719,7 @@ var btn_exportmap_action=function(ext) {
 			//console.log(id + ":" + v);
 			type = (type == null ? "node" : type);
 			if ((v == undefined || v == 0) && type == 'node') { return; }
-			json += comma + '{"id":"' + id + '","score":' + v + ',"type":"' + type + '"}';
+			json += `${comma}{"id":"${id}","score":${v},"type":"${type}"}`;
 			comma = ',';
 		});
 		json += ']}';

@@ -15,18 +15,26 @@
 	<![endif]--> 
 </head>
 <body>
-  <p>公会战辅助模拟器</p>
-  <p>1. 如果之前已经导出过地形数据，请点击下方的导入地形按钮，然后选择之前导出的template.json文件，然后确定</p>
-  <p>2. 如果之前没有导出过地形，请<a href="editor.htm">点击这里，进入到地形编辑器界面</a></p>
+  <p></p>
+  <p></a></p>
 <table id="menu" class="menu">
-<tr><td class="title" colspan="16">工具</td></tr>
+<caption>公会战辅助模拟器</caption>
+<tr>
+  <td class="title" colspan="16">文件选项<br/>
+    <font size="1">
+      1. 如果之前没有导出过地形，请<a href="editor.htm">点击这里，打开地形编辑器</a><br/>
+      2. 如果之前已经导出过地形数据，请点击下方的"选择文件"按钮，然后选择之前导出的template.json文件，然后确定<br/>
+      3. 选择想要一次生成到多少轮的模拟结果，一般来说选择最后一轮，即第11天第2轮，这样总分就确定了。可以按照这个总分预估出是否需要在和平期留一块枯木或者石头。
+    </font></td>
+</tr>
 <tr class="headline">
-  <th colspan="2">导入地形</th>
-  <th colspan="3"><input id="import" type="file" onchange="upload(this)" /></th>
+  <th>导入地形</th>
+  <th colspan="1"><input id="import" type="file" onchange="upload(this)" /></th>
+  <th colspan="14"></th>
 </tr>
 <tr><td class="title" colspan="16">地形模版</td></tr>
 <tr class="headline">
-  <th colspan="2">选择轮次</th>
+  <th>选择轮次</th>
   <th><select id='round'>
     <option value="1">第1天第1轮</option>
     <option value="2">第1天第2轮</option>
@@ -56,7 +64,8 @@
     <option value="26">第11天第2轮</option>
     </select>
   </th>
-  <th colspan="13"><input id="build" type="button" value="生成地图"/></th>
+  <th colspan="1"><input id="build" type="button" value="生成地图"/></th>
+  <th colspan="13"></th>
 </tr>
 </table>
 <div id="tplleft" class="seedleft">
