@@ -1,0 +1,87 @@
+ *{
+   margin: 0;
+   padding: 0;
+ }
+ body {
+ 	width: 900px;
+ }
+ td {
+ 	font-size: 8px;
+ }
+ .plist {
+	width: 20px;
+ }
+ .plist, .war{
+ 	border: 1px solid #aaa;
+ 	border-collapse: collapse;
+ }
+ .plist caption, .menu caption {
+ font: 700 20px/28px "Î¢ÈíÑÅºÚ";
+ padding: 10px;
+ }
+ .plist th,.plist td,.war th,.war td{
+ border: 1px solid #aaa;
+ text-align: center;
+ }
+ .plist th,.plist td{
+ width: 20px;
+ line-height: 24px;
+ font-size: 14px;
+ font-family: "Î¢ÈíÑÅºÚ";
+ padding: 4px;
+ }
+ .plist td{
+ padding: 0;
+ }
+ tr.headline,th.headline{
+ color: #fff;
+ background-color: #379;
+ }
+ .plist td input{
+ width: 32px;
+ text-align: center;
+ border: none;
+ outline-style: none;
+ font-size: 8px;
+ border: 0px solid #fff;
+ }
+ .menu {
+ 	width: 720px;
+ }
+
+ .menu th, .menu td{
+ width: 60px;
+ line-height: 24px;
+ font-size: 14px;
+ font-family: "Î¢ÈíÑÅºÚ";
+ text-align: center;
+ padding: 4px;
+}
+ .menu th.middle, .menu td.middle{
+ width: 120px;
+ }
+.menu tr.title,.menu td.title{
+ font: 500 16px/16px "Î¢ÈíÑÅºÚ";
+ text-align: left;
+}
+.menu tr.text,.menu td.text{
+ font-size: 12px;
+ text-align: left;
+}
+.menu input[type="text"] {
+ width: 40px;
+}
+div {
+ display: inline;
+ background-color: #fff;
+}
+div.seedleft {
+width: 70%;
+float: left;
+}
+div.seedright {
+float: right;
+}
+div#colorpicker {
+ color: black;
+}

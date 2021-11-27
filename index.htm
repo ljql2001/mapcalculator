@@ -2,78 +2,16 @@
 <html lang="zh-CN">
 <head>
     <meta charset="utf-8"> 
-    <title>公会战辅助模拟器</title>
+    <title>站点地图</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<link rel="stylesheet" href="main.min.css">
-	<script src="jquery-3.5.1.min.js"></script>
-  <script src="filesaver.js"></script>
-	<script src="color-picker.js"></script>
-  <script src="gamedata.js"></script>
-  <script src="extension.js"></script>
+    <script language="javascript"> location.replace("components/pages/warsimulator/simulator.htm") </script>
+	<link rel="stylesheet" href="css/main.min.css">
 	<!--[if lt IE 9]>
 	<script src="//cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
 	<![endif]--> 
 </head>
 <body>
-  <p></p>
-  <p></a></p>
-<table id="menu" class="menu">
-<caption>公会战辅助模拟器</caption>
-<tr>
-  <td class="title" colspan="16">文件选项<br/>
-    <font size="1">
-      1. 如果之前没有导出过地形，请<a href="editor.htm">点击这里，打开地形编辑器</a><br/>
-      2. 如果之前已经导出过地形数据，请点击下方的"选择文件"按钮，然后选择之前导出的template.json文件，然后确定<br/>
-      3. 选择想要一次生成到多少轮的模拟结果，一般来说选择最后一轮，即第11天第2轮，这样总分就确定了。可以按照这个总分预估出是否需要在和平期留一块枯木或者石头。
-    </font></td>
-</tr>
-<tr class="headline">
-  <th>导入地形</th>
-  <th colspan="1"><input id="import" type="file" onchange="upload(this)" /></th>
-  <th colspan="14"></th>
-</tr>
-<tr><td class="title" colspan="16">地形模版</td></tr>
-<tr class="headline">
-  <th>选择轮次</th>
-  <th><select id='round'>
-    <option value="1">第1天第1轮</option>
-    <option value="2">第1天第2轮</option>
-    <option value="3">第1天第3轮</option>
-    <option value="4">第2天第1轮</option>
-    <option value="5">第2天第2轮</option>
-    <option value="6">第2天第3轮</option>
-    <option value="7">第3天第1轮</option>
-    <option value="8">第3天第2轮</option>
-    <option value="9">第3天第3轮</option>
-    <option value="10">第4天第1轮</option>
-    <option value="11">第4天第2轮</option>
-    <option value="12">第4天第3轮</option>
-    <option value="13">第5天第1轮</option>
-    <option value="14">第5天第2轮</option>
-    <option value="15">第6天第1轮</option>
-    <option value="16">第6天第2轮</option>
-    <option value="17">第7天第1轮</option>
-    <option value="18">第7天第2轮</option>
-    <option value="19">第8天第1轮</option>
-    <option value="20">第8天第2轮</option>
-    <option value="21">第9天第1轮</option>
-    <option value="22">第9天第2轮</option>
-    <option value="23">第10天第1轮</option>
-    <option value="24">第10天第2轮</option>
-    <option value="25">第11天第1轮</option>
-    <option value="26">第11天第2轮</option>
-    </select>
-  </th>
-  <th colspan="1"><input id="build" type="button" value="生成地图"/></th>
-  <th colspan="13"></th>
-</tr>
-</table>
-<div id="tplleft" class="seedleft">
-<table id="template" class="plist">
-  <!--caption>第xxx轮工会战</caption-->
-</table>
-</div>
-<div id="stub"></div>
+
 </body>
 </html>
 
