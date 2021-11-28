@@ -1,17 +1,5 @@
 if (typeof jQuery === 'undefined') { throw 'no jquery'; }
 
-var initialize=function() {
-	build_template_table();
-	raw_data_init();
-}
-
-var setupMenuComponents=function() {
-	let inputs = ['#societies1', '#societies2', '#societies3', '#societies4'];
-	inputs.forEach(function(id,index) {
-		let s = societies[index]; $(id).val(s);
-	});
-}
-
 var raw_data_init=function() {
 	raw_data = {"rounds":{0:{"grids":{}}}};
 	bases.forEach(function(i) {

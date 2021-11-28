@@ -10,8 +10,17 @@ var init_page_data=function() {
 	};
 }
 
-$(document).ready(function(){
-  $("input#build").click(btn_buildmap_action);
-  init_page_data();
+var bind_ui_actions=function() {
+	$("input#build").click(btn_buildmap_action);
+}
+
+var initialize=function() {
+	raw_data_init();
+	init_page_data();
+	build_template_table();
+	bind_ui_actions();
+}
+
+$(document).ready(function() {
   initialize();
 });

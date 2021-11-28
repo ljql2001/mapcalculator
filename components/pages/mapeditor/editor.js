@@ -10,7 +10,7 @@ var init_page_data=function() {
 	};
 }
 
-$(document).ready(function(){
+var bind_ui_actions=function() {
   $("#lake").click(button_action);
   $("#hill").click(button_action);
   $("#bank").click(button_action);
@@ -20,7 +20,23 @@ $(document).ready(function(){
   $("input#exportcsv").click(download_csv);
   $("#maptype").change(on_change_maptype);
   $("#baseslocation").change(on_change_baseslocation);
+}
+
+var setup_menu_components=function() {
+  let inputs = ['#societies1', '#societies2', '#societies3', '#societies4'];
+  inputs.forEach(function(id,index) {
+    let s = societies[index]; $(id).val(s);
+  });
+}
+
+var initialize=function() {
+  raw_data_init();
   init_page_data();
+  build_template_table();
+  setup_menu_components();
+  bind_ui_actions();
+}
+
+$(document).ready(function() {
   initialize();
-  setupMenuComponents();
 });
