@@ -1,5 +1,12 @@
 if (typeof jQuery === 'undefined') { throw 'no jquery'; }
 
+var init_resources_data=function() {
+	let key = 'img'; let images = raw_resources[key]; resources = JSON.parse(JSON.stringify(raw_resources));
+	for (var k in images) {
+		resources[key][k] = resources_path+images[k];
+	};
+}
+
 var raw_data_init=function() {
 	raw_data = {"rounds":{0:{"grids":{}}}};
 	bases.forEach(function(i) {
@@ -585,8 +592,9 @@ var btn_importmap_action=function(text) {
 		if (json['societies']) { societies = json['societies']; }
 	}
 
-	// build the template map and initialize the raw data
-	initialize();
+	// reset the raw data and build the template map
+	reset_data();
+	build_template_table();
 
 	// apply the json data
 	let img_lake = resources['img']['lake']; let img_hill = resources['img']['hill'];
@@ -733,11 +741,11 @@ var on_change_maptype=function() {
 	switch (value) {
 		case 1:
 			levels = levels_rank1;
-			initialize();
+			build_template_table();
 			break;
 		case 2:
 			levels = levels_rank2;
-			initialize();
+			build_template_table();
 			break;
 		default:
 			alert('功能正在开发中，敬请期待...');
@@ -749,11 +757,11 @@ var on_change_baseslocation=function() {
 	switch (value) {
 		case 'left':
 			bases = bases1;
-			initialize();
+			build_template_table();
 			break;
 		case 'right':
 			bases = bases2;
-			initialize();
+			build_template_table();
 			break;
 	}
 }
