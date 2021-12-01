@@ -590,6 +590,31 @@ var btn_importmap_action=function(text) {
 		if (json['bases']) { bases = json['bases']; }
 		if (json['colors']) { colors = json['colors']; }
 		if (json['societies']) { societies = json['societies']; }
+		let input_ids = ['societies1', 'societies2', 'societies3', 'societies4'];
+		// 回填基地名称
+		for (i in input_ids) {
+			let id = input_ids[i]; let v = societies[i];
+			$('input#'+id).val(v);
+		}
+		// 回填组别
+		var min_score = 100000;
+		for (var i = 0; i < 9; i++) { 
+			let item = template[i]; let v = parseInt(item['score']);
+			if (v) { min_score = Math.min(min_score, v); }
+		}
+		if (levels_rank1['node'] == min_score) {
+			$('select#maptype').val('1');
+		} else if (levels_rank2['node'] == min_score) {
+			$('select#maptype').val('2');
+		}
+		// 回填基地位置
+		if (bases1.indexOf(bases[0]) >= 0) {
+			$('select#baseslocation').val('left');
+			// $('select#baseslocation').find("option[value='1']").attr("selected",true);
+		} else if (bases2.indexOf(bases[0]) >= 0) {
+			$('select#baseslocation').val('right');
+			// $('select#baseslocation').find("option[value='2']").attr("selected",true);
+		}
 	}
 
 	// reset the raw data and build the template map
