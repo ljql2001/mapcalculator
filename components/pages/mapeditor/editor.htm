@@ -26,7 +26,28 @@
 </table>
 
 <table id="menu" class="menu">
-<tr class="title"><td class="title" colspan="16">第一步：地图类型选项</td></tr>
+<tr>
+  <td class="title" colspan="16">第一步：导入文件 <a href="../../../data/template.json" download="template.json"><font size="1">下载示例文件</font></a><br/>
+    <font size="1">
+      如果之前没有导出过地图模版template.json，请直接进入第二步。<br/>
+      如果之前导出过地图模版，请点击“选择文件”按钮，然后选择之前保存的template.json文件，并上传文件。上传文件之后，请直接进入第三步。
+    </font></td>
+</tr>
+<tr class="headline">
+  <th class="middle">导入地形</th>
+  <th><input id="import" type="file" onchange="upload(this)" /></th>
+  <th colspan="14"></th>
+</tr>
+</table>
+
+<table id="menu" class="menu">
+<tr class="title">
+  <td class="title" colspan="16">第二步：地图类型选项<br />
+    <font size="1">
+      此步骤会重置第一步导入的地图。如果在第一步导入了地图，请跳过这一步，直接进入第三步。
+    </font></td>
+  </td>
+</tr>
 <tr class="headline">
 <th>组别</th>
 <th colspan="1">
@@ -53,27 +74,12 @@
 </table>
 
 <table id="menu" class="menu">
-<tr>
-  <td class="title" colspan="16">第二步：导入文件<br/>
-    <font size="1">
-      如果之前没有导出过地图模版template.json，就不需要点击“选择文件”，只需要直接进入第三步。<br/>
-      如果之前导出过地图模版，请点击“选择文件”按钮，然后选择之前保存的template.json文件，并上传文件。上传文件之后，可以对错误的地块分数进行调整。
-    </font></td>
-</tr>
-<tr class="headline">
-  <th class="middle">导入地形</th>
-  <th><input id="import" type="file" onchange="upload(this)" /></th>
-  <th colspan="14"></th>
-</tr>
-</table>
-
-<table id="menu" class="menu">
 <tr><td class="title" colspan="16">第三步：地形编辑选项<br/>
   <font size="1">
     1. 点击"编辑地形"按钮。<br/>
     2. 在下方的地图中先创建湖泊和山等地形。<br/>
-    3. 填写特殊地块的分数。<br/>
-    <font color="red">（注意：因为功能限制，湖泊和山等地形创建后无法改变，所以需要最后再填写地块分数！）</font><br/>
+    3. 修改特殊地块的分数。<br/>
+    <font color="red">（注意：因为功能限制，湖泊和山等地形创建后无法改变，所以需要先编辑湖泊山脉，最后再填写地块分数！）</font><br/>
     小技巧：可以多次导出地形文件，形成备份，出错后可以重新导入，继续编辑地形。<br/>
     4. 点击"完成编辑"按钮，进入第四步。
   </font></td></tr>
