@@ -85,3 +85,6 @@ float: right;
 div#colorpicker {
  color: black;
 }
+input:disabled {  
+  opacity: 1.0;
+}

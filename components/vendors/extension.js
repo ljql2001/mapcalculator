@@ -566,7 +566,8 @@ var build_template_table=function() {
 				var color = colors[index_base];
 				html += '<td id="' + id + '" class="site" score="' + levels['base'] + '" style="background-color: ' + color + '"><input type="text" disabled="disabled" value="' + levels['base'] + '" /></td>';
 			} else {
-				html += '<td id="' + id + '" class="site" score="' + levels['node'] + '"><input type="text" disabled="disabled" value="' + levels['node'] + '" /></td>';
+				let lv = preset[id]; let score = lv ? levels[lv] : levels['node'];
+				html += '<td id="' + id + '" class="site" score="' + score + '"><input type="text" disabled="disabled" value="' + score + '" /></td>';
 			}
 		}
 		html += '<th class="headline">' + r + '</th></tr>';
@@ -644,10 +645,11 @@ var btn_importmap_action=function(text) {
 				grid.empty(); grid.append('银行<br/>' + levels['bank']);
 			}
 		} else {
+			let factor = 0 - (item.score / levels['bank']); let color = changeColor('#E0E0E0', factor);
 			if (grid.children('input').length <= 0) {
-				grid.append('<input type="text" disabled="disabled" value="' + item.score + '" />');
+				grid.append('<input type="text" disabled="disabled" value="' + item.score + '" style="color:'+color+';" />');
 			} else {
-				grid.children('input').val(item.score);
+				grid.children('input').val(item.score).css("color",color);
 			}
 		}
 	}

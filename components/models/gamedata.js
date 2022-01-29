@@ -11,6 +11,7 @@ let colors = ['red','green','blue','fuchsia'];
 let bases1 = ['T06','F01','A15','O20'];
 let bases2 = ['T15','O01','A06','F20'];
 let all_bases = [bases1, bases2];
+let preset = {'T06':'base','F01':'base','A15':'base','O20':'base','T15':'base','O01':'base','A06':'base','F20':'base','L09':'lv4','L10':'lv4','L11':'lv4','L12':'lv4','K09':'lv4','L12':'lv4','J09':'lv4','J12':'lv4','I09':'lv4','I10':'lv4','I11':'lv4','I12':'lv4'};
 
 var levels = levels_rank1;
 var bases = bases1;
